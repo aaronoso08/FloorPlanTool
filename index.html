@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Floor Plan Tool - Latino Built</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -12,344 +12,500 @@
   --bg:#F7F3EF;--surface:#FFF;--surface2:#FDF8F4;
   --border:#E8DDD4;--border-dark:#D4C4B0;
   --text:#1C1209;--text2:#5C4033;--text3:#9C7B6B;
-  --green:#16A34A;--green-bg:#DCFCE7;--green-dark:#166534;
-  --red:#DC2626;--red-bg:#FEE2E2;--red-dark:#991B1B;
-  --yellow:#D97706;--yellow-bg:#FEF3C7;--yellow-dark:#92400E;
-  --blue:#1D4ED8;--blue-bg:#DBEAFE;
-  --gray:#6B7280;--gray-bg:#F3F4F6;
+  --green:#16A34A;--red:#DC2626;--red-bg:#FEE2E2;
   --sh-sm:0 1px 3px rgba(107,45,15,.08);
   --sh:0 4px 12px rgba(107,45,15,.12);
   --sh-lg:0 12px 32px rgba(107,45,15,.18);
   --r:10px;--rl:14px;
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
 }
-*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:14px}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);font-size:14px}
 
+/* ── TOPBAR ── */
 .topbar{background:linear-gradient(135deg,var(--brand) 0%,var(--brand-mid) 60%,var(--brand-light) 100%);
-  color:#fff;padding:12px 16px;min-height:56px;display:flex;align-items:center;
-  justify-content:space-between;box-shadow:0 2px 12px rgba(0,0,0,.25);position:sticky;top:0;z-index:50}
-.topbar-brand{display:flex;align-items:center;gap:10px}
-.topbar-icon{width:34px;height:34px;background:rgba(255,255,255,.15);border-radius:10px;
-  display:flex;align-items:center;justify-content:center;border:1px solid rgba(255,255,255,.2);flex-shrink:0;font-size:18px}
-.topbar-title{font-size:.95rem;font-weight:800;letter-spacing:-.02em}
-.topbar-sub{font-size:.62rem;opacity:.65;margin-top:1px}
-.topbar-actions{display:flex;gap:6px;align-items:center}
+  color:#fff;padding:0 12px;height:52px;display:flex;align-items:center;
+  justify-content:space-between;box-shadow:0 2px 12px rgba(0,0,0,.25);flex-shrink:0;z-index:100;position:relative}
+.topbar-brand{display:flex;align-items:center;gap:8px}
+.topbar-icon{width:30px;height:30px;background:rgba(255,255,255,.15);border-radius:8px;
+  display:flex;align-items:center;justify-content:center;border:1px solid rgba(255,255,255,.2);font-size:15px;flex-shrink:0}
+.topbar-title{font-size:.85rem;font-weight:800;letter-spacing:-.02em}
+.topbar-sub{font-size:.58rem;opacity:.65;margin-top:1px}
+.topbar-right{display:flex;gap:5px;align-items:center}
+.proj-input{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);border-radius:7px;
+  padding:5px 9px;color:#fff;font-size:.72rem;font-family:inherit;outline:none;width:130px}
+.proj-input::placeholder{color:rgba(255,255,255,.6)}
+.btn{display:inline-flex;align-items:center;gap:4px;padding:6px 11px;border-radius:7px;
+  border:none;cursor:pointer;font-size:.72rem;font-weight:600;transition:all .15s;font-family:inherit;white-space:nowrap}
+.btn-ghost{background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.25)}
+.btn-ghost:active{background:rgba(255,255,255,.28)}
+.btn-primary{background:var(--accent);color:#fff}
+.btn-primary:active{background:#d46b1a}
+.btn-danger{background:var(--red);color:#fff}
+.btn-sm{padding:5px 9px;font-size:.7rem}
+.btn-icon{width:32px;height:32px;padding:0;justify-content:center}
 
-.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:8px;
-  border:none;cursor:pointer;font-size:.8rem;font-weight:600;transition:all .15s;font-family:inherit;white-space:nowrap}
-.btn-primary{background:var(--accent);color:#fff}.btn-primary:hover{background:#d46b1a}
-.btn-ghost{background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.2)}.btn-ghost:hover{background:rgba(255,255,255,.22)}
-.btn-outline{background:var(--surface);color:var(--brand);border:1.5px solid var(--border-dark)}.btn-outline:hover{background:var(--surface2)}
-.btn-danger{background:var(--red);color:#fff}.btn-danger:hover{background:#b91c1c}
-.btn-success{background:var(--green);color:#fff}.btn-success:hover{background:#15803d}
-.btn-sm{padding:6px 11px;font-size:.75rem}
-.btn-xs{padding:4px 9px;font-size:.69rem}
-.btn-icon{width:34px;height:34px;padding:0;justify-content:center;border-radius:8px}
+/* ── DESKTOP LAYOUT ── */
+.app-body{display:flex;height:calc(100vh - 52px)}
 
-.toolbar{background:var(--surface);border-bottom:1.5px solid var(--border);padding:10px 16px;
-  display:flex;align-items:center;gap:8px;flex-wrap:wrap;box-shadow:var(--sh-sm);position:sticky;top:56px;z-index:40}
-.tool-group{display:flex;align-items:center;gap:4px;padding-right:10px;border-right:1.5px solid var(--border)}
-.tool-group:last-child{border-right:none;padding-right:0}
-.tool-group-label{font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);margin-right:4px}
-.tool-btn{padding:6px 11px;border-radius:7px;border:1.5px solid var(--border);background:var(--surface);
-  font-size:.75rem;font-weight:600;cursor:pointer;color:var(--text2);transition:all .15s;font-family:inherit;display:flex;align-items:center;gap:5px}
-.tool-btn:hover{border-color:var(--accent);color:var(--brand);background:var(--surface2)}
-.tool-btn.active{background:var(--brand);color:#fff;border-color:var(--brand)}
-.tool-btn svg{width:13px;height:13px;flex-shrink:0}
+/* LEFT SIDEBAR - desktop only */
+.left-bar{width:72px;background:var(--surface);border-right:1.5px solid var(--border);
+  display:flex;flex-direction:column;align-items:center;padding:6px 5px;gap:2px;
+  overflow-y:auto;flex-shrink:0;z-index:10}
+.left-bar::-webkit-scrollbar{display:none}
+.lb-group{width:100%;display:flex;flex-direction:column;gap:2px;margin-bottom:5px;padding-bottom:5px;border-bottom:1px solid var(--border)}
+.lb-group:last-child{border-bottom:none;margin-bottom:0}
+.lb-label{font-size:.52rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);text-align:center;margin-bottom:1px}
+.lb-btn{width:60px;padding:6px 3px;border-radius:8px;border:1.5px solid transparent;background:transparent;
+  cursor:pointer;font-size:.58rem;font-weight:600;color:var(--text2);display:flex;flex-direction:column;
+  align-items:center;gap:2px;transition:all .12s;font-family:inherit;line-height:1.2}
+.lb-btn:hover{background:var(--surface2);border-color:var(--border);color:var(--brand)}
+.lb-btn.active{background:var(--brand);color:#fff;border-color:var(--brand)}
+.lb-btn svg{width:18px;height:18px;flex-shrink:0}
+.lb-icon{width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:16px;line-height:1}
 
-.main-layout{display:flex;height:calc(100vh - 110px)}
-.canvas-wrap{flex:1;position:relative;overflow:hidden;background:#F0EBE5;cursor:crosshair}
-.canvas-wrap.mode-select{cursor:default}
-.canvas-wrap.mode-text{cursor:text}
-#canvas{position:absolute;top:0;left:0}
+/* CANVAS */
+.canvas-area{flex:1;position:relative;overflow:hidden;background:#D9D0C5}
+#fp-canvas{position:absolute;top:0;left:0;touch-action:none}
+#fp-canvas.cur-select{cursor:default}
+#fp-canvas.cur-pan{cursor:grab}
+#fp-canvas.cur-grabbing{cursor:grabbing}
+#fp-canvas.cur-draw{cursor:crosshair}
 
-.side-panel{width:260px;background:var(--surface);border-left:1.5px solid var(--border);display:flex;flex-direction:column;overflow:hidden;flex-shrink:0}
-.side-hdr{background:var(--brand);color:#fff;padding:12px 14px;font-weight:800;font-size:.85rem;display:flex;align-items:center;gap:8px;flex-shrink:0}
-.side-hdr svg{width:15px;height:15px;flex-shrink:0}
-.side-body{flex:1;overflow-y:auto;padding:12px}
-.side-body::-webkit-scrollbar{width:4px}.side-body::-webkit-scrollbar-thumb{background:var(--border-dark);border-radius:99px}
+.zoom-btns{position:absolute;bottom:14px;right:14px;display:flex;flex-direction:column;gap:5px;z-index:10}
+.zoom-btn{width:36px;height:36px;background:var(--surface);border:1.5px solid var(--border);border-radius:9px;
+  cursor:pointer;font-size:1.1rem;font-weight:700;color:var(--text2);display:flex;align-items:center;justify-content:center;
+  box-shadow:var(--sh-sm);transition:all .15s;font-family:inherit}
+.zoom-btn:active{background:var(--surface2);transform:scale(.94)}
 
-.prop-section{margin-bottom:16px}
-.prop-title{font-size:.65rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--brand);margin-bottom:8px;padding-bottom:5px;border-bottom:2px solid var(--border)}
-.prop-row{display:flex;flex-direction:column;gap:4px;margin-bottom:10px}
-.prop-label{font-size:.68rem;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.03em}
-.prop-input{padding:8px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:.83rem;outline:none;font-family:inherit;color:var(--text);background:var(--surface);width:100%;transition:border-color .15s}
-.prop-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(232,122,42,.12)}
-.prop-input:disabled{background:var(--bg);color:var(--text3)}
-.color-row{display:flex;gap:5px;flex-wrap:wrap}
-.color-swatch{width:24px;height:24px;border-radius:5px;cursor:pointer;border:2px solid transparent;transition:all .15s;flex-shrink:0}
-.color-swatch.active{border-color:var(--brand);transform:scale(1.15)}
-.room-list{display:flex;flex-direction:column;gap:5px;max-height:220px;overflow-y:auto}
-.room-item{padding:9px 11px;background:var(--surface2);border:1.5px solid var(--border);border-radius:8px;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:8px}
-.room-item:hover{border-color:var(--accent);background:#FEF9F4}
-.room-item.selected{border-color:var(--brand);background:#FEF3EF}
-.room-color-dot{width:10px;height:10px;border-radius:3px;flex-shrink:0}
-.room-info{flex:1;min-width:0}
-.room-name{font-size:.78rem;font-weight:700;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.room-size{font-size:.65rem;color:var(--text3);margin-top:1px}
-.room-del{width:20px;height:20px;border-radius:5px;border:none;background:transparent;cursor:pointer;color:var(--text3);font-size:.75rem;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.room-del:hover{background:var(--red-bg);color:var(--red)}
+/* RIGHT PANEL - desktop */
+.right-panel{width:224px;background:var(--surface);border-left:1.5px solid var(--border);
+  display:flex;flex-direction:column;overflow:hidden;flex-shrink:0}
+.rp-hdr{background:var(--brand);color:#fff;padding:10px 12px;font-weight:800;font-size:.82rem;flex-shrink:0}
+.rp-body{flex:1;overflow-y:auto;padding:10px 12px}
+.rp-body::-webkit-scrollbar{width:3px}.rp-body::-webkit-scrollbar-thumb{background:var(--border-dark);border-radius:99px}
+.rp-section{margin-bottom:14px}
+.rp-title{font-size:.6rem;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--brand);
+  margin-bottom:7px;padding-bottom:4px;border-bottom:2px solid var(--border)}
+.rp-row{display:flex;flex-direction:column;gap:3px;margin-bottom:8px}
+.rp-label{font-size:.65rem;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.03em}
+.rp-input{padding:7px 9px;border:1.5px solid var(--border);border-radius:7px;font-size:.82rem;
+  outline:none;font-family:inherit;color:var(--text);background:var(--surface);width:100%;transition:border-color .15s}
+.rp-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(232,122,42,.12)}
+.rp-input:disabled{background:var(--bg);color:var(--text3);font-weight:700}
+.rp-grid2{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.color-swatches{display:flex;flex-wrap:wrap;gap:4px;margin-top:2px}
+.cswatch{width:22px;height:22px;border-radius:5px;cursor:pointer;border:2px solid transparent;transition:all .12s}
+.cswatch.sel{border-color:var(--brand);transform:scale(1.2)}
+.room-list{display:flex;flex-direction:column;gap:4px}
+.room-item{padding:7px 9px;background:var(--surface2);border:1.5px solid var(--border);border-radius:7px;
+  cursor:pointer;transition:all .12s;display:flex;align-items:center;gap:7px;font-size:.75rem}
+.room-item:hover,.room-item:active{border-color:var(--accent)}
+.room-item.sel{border-color:var(--brand);background:#FEF3EF}
+.room-dot{width:9px;height:9px;border-radius:3px;flex-shrink:0}
+.room-name-txt{flex:1;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.room-sqft{color:var(--text3);font-size:.65rem}
+.room-del{border:none;background:transparent;cursor:pointer;color:var(--text3);font-size:.9rem;padding:2px 4px;border-radius:4px;flex-shrink:0}
+.room-del:active{background:var(--red-bg);color:var(--red)}
 
-.floor-tabs{display:flex;gap:4px;padding:10px 12px;background:var(--surface2);border-bottom:1.5px solid var(--border);flex-shrink:0}
-.floor-tab{padding:5px 12px;border-radius:6px;border:1.5px solid var(--border);background:var(--surface);font-size:.72rem;font-weight:700;cursor:pointer;color:var(--text2);transition:all .15s;font-family:inherit}
-.floor-tab:hover{border-color:var(--accent);color:var(--brand)}
-.floor-tab.active{background:var(--brand);color:#fff;border-color:var(--brand)}
-.floor-tab-add{padding:5px 8px;border-radius:6px;border:1.5px dashed var(--border-dark);background:transparent;font-size:.72rem;font-weight:700;cursor:pointer;color:var(--text3);transition:all .15s;font-family:inherit}
-.floor-tab-add:hover{border-color:var(--accent);color:var(--accent)}
+/* ── MOBILE BOTTOM TAB BAR ── */
+.mob-tabbar{display:none;background:var(--surface);border-top:1.5px solid var(--border);
+  padding:6px 4px calc(6px + var(--safe-bottom));
+  flex-shrink:0;z-index:90;box-shadow:0 -2px 12px rgba(107,45,15,.1)}
+.mob-tabs{display:flex;gap:2px;justify-content:space-around}
+.mob-tab{flex:1;padding:6px 2px;border-radius:8px;border:none;background:transparent;
+  font-size:.58rem;font-weight:700;color:var(--text3);display:flex;flex-direction:column;
+  align-items:center;gap:3px;cursor:pointer;font-family:inherit;transition:all .12s;min-width:0}
+.mob-tab svg{width:20px;height:20px;flex-shrink:0}
+.mob-tab.active{color:var(--brand);background:var(--surface2)}
+.mob-tab-icon{font-size:18px;line-height:1}
 
-.overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9000;display:none;align-items:center;justify-content:center;backdrop-filter:blur(2px)}
+/* ── MOBILE TOOL DRAWER (slides up from bottom) ── */
+.mob-drawer-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:200;backdrop-filter:blur(2px)}
+.mob-drawer-bg.open{display:block}
+.mob-drawer{position:fixed;left:0;right:0;bottom:0;background:var(--surface);border-radius:20px 20px 0 0;
+  z-index:201;max-height:72vh;display:flex;flex-direction:column;
+  transform:translateY(100%);transition:transform .28s cubic-bezier(.32,1,.6,1);
+  padding-bottom:var(--safe-bottom)}
+.mob-drawer.open{transform:translateY(0)}
+.mob-drawer-handle{width:40px;height:4px;background:var(--border-dark);border-radius:99px;margin:10px auto 8px;flex-shrink:0}
+.mob-drawer-hdr{display:flex;align-items:center;justify-content:space-between;padding:0 16px 10px;flex-shrink:0}
+.mob-drawer-title{font-size:.88rem;font-weight:800;color:var(--brand)}
+.mob-drawer-close{width:28px;height:28px;border-radius:7px;border:none;background:var(--surface2);cursor:pointer;
+  font-size:.9rem;display:flex;align-items:center;justify-content:center;color:var(--text2)}
+.mob-drawer-body{overflow-y:auto;padding:0 12px 16px;flex:1}
+.mob-drawer-body::-webkit-scrollbar{display:none}
+
+/* Mobile element grid */
+.mob-elem-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.mob-elem-btn{padding:10px 4px;border-radius:10px;border:1.5px solid var(--border);background:var(--surface2);
+  cursor:pointer;font-size:.62rem;font-weight:700;color:var(--text2);display:flex;flex-direction:column;
+  align-items:center;gap:4px;font-family:inherit;transition:all .12s;min-height:64px;justify-content:center}
+.mob-elem-btn:active{background:var(--brand);color:#fff;border-color:var(--brand);transform:scale(.95)}
+.mob-elem-icon{font-size:22px;line-height:1}
+.mob-elem-btn svg{width:22px;height:22px}
+
+/* Mobile props sheet */
+.mob-props-sheet{position:fixed;left:0;right:0;bottom:0;background:var(--surface);border-radius:20px 20px 0 0;
+  z-index:202;max-height:80vh;display:flex;flex-direction:column;
+  transform:translateY(100%);transition:transform .28s cubic-bezier(.32,1,.6,1);
+  padding-bottom:var(--safe-bottom)}
+.mob-props-sheet.open{transform:translateY(0)}
+.mob-ps-handle{width:40px;height:4px;background:var(--border-dark);border-radius:99px;margin:10px auto 0;flex-shrink:0}
+.mob-ps-hdr{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;flex-shrink:0;border-bottom:1.5px solid var(--border)}
+.mob-ps-title{font-size:.9rem;font-weight:800;color:var(--brand)}
+.mob-ps-body{overflow-y:auto;padding:14px 16px;flex:1}
+.mob-ps-body::-webkit-scrollbar{display:none}
+.mob-ps-section{margin-bottom:16px}
+.mob-ps-label{font-size:.68rem;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.04em;margin-bottom:5px;display:block}
+.mob-input{width:100%;padding:11px 13px;border:1.5px solid var(--border);border-radius:10px;
+  font-size:.9rem;font-family:inherit;color:var(--text);background:var(--surface);outline:none;transition:border-color .15s}
+.mob-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(232,122,42,.12)}
+.mob-input-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.mob-action-row{display:flex;gap:8px;margin-top:6px}
+.mob-action-row .btn{flex:1;justify-content:center;padding:11px}
+
+/* Mobile tool row (select/draw/pan) */
+.mob-tool-row{display:flex;gap:6px;padding:8px 12px;background:var(--surface2);border-bottom:1px solid var(--border);flex-shrink:0}
+.mob-tool-btn{flex:1;padding:8px 4px;border-radius:8px;border:1.5px solid var(--border);background:var(--surface);
+  font-size:.7rem;font-weight:700;color:var(--text2);display:flex;flex-direction:column;align-items:center;gap:3px;
+  cursor:pointer;font-family:inherit;transition:all .12s}
+.mob-tool-btn.active{background:var(--brand);color:#fff;border-color:var(--brand)}
+.mob-tool-btn svg{width:18px;height:18px}
+
+/* ── OVERLAYS / MODALS ── */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:300;display:none;align-items:center;
+  justify-content:center;padding:16px;backdrop-filter:blur(2px)}
 .overlay.open{display:flex}
-.modal{background:var(--surface);border-radius:var(--rl);padding:22px 20px;width:100%;max-width:400px;box-shadow:var(--sh-lg);animation:mIn .2s ease}
-@keyframes mIn{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:none}}
-.modal-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;padding-bottom:10px;border-bottom:2px solid var(--border)}
-.modal-title{font-size:1rem;font-weight:800;color:var(--brand)}
-.modal-close{width:30px;height:30px;border-radius:7px;border:none;cursor:pointer;background:var(--surface2);color:var(--text2);font-size:1rem;display:flex;align-items:center;justify-content:center}
-.modal-close:hover{background:var(--red-bg);color:var(--red)}
-.fg{display:flex;flex-direction:column;gap:5px;margin-bottom:12px}
-.fg2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
-.flabel{font-size:.7rem;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.04em}
-.finput{padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:.88rem;outline:none;font-family:inherit;color:var(--text);background:var(--surface);width:100%;transition:border-color .15s}
+.modal{background:var(--surface);border-radius:var(--rl);padding:20px;width:100%;max-width:380px;
+  box-shadow:var(--sh-lg);animation:mIn .2s ease;max-height:90vh;overflow-y:auto}
+@keyframes mIn{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:none}}
+.modal-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;padding-bottom:10px;border-bottom:2px solid var(--border)}
+.modal-title{font-size:.95rem;font-weight:800;color:var(--brand)}
+.modal-close{width:28px;height:28px;border-radius:6px;border:none;cursor:pointer;background:var(--surface2);
+  color:var(--text2);display:flex;align-items:center;justify-content:center;font-size:.9rem}
+.fg{display:flex;flex-direction:column;gap:4px;margin-bottom:10px}
+.fg2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+.flabel{font-size:.68rem;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.04em}
+.finput{padding:10px 11px;border:1.5px solid var(--border);border-radius:8px;font-size:.88rem;
+  outline:none;font-family:inherit;color:var(--text);background:var(--surface);width:100%;transition:border-color .15s}
 .finput:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(232,122,42,.12)}
-.form-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:16px;padding-top:12px;border-top:1.5px solid var(--border)}
+.form-actions{display:flex;gap:7px;justify-content:flex-end;margin-top:14px;padding-top:10px;border-top:1.5px solid var(--border)}
 
-.badge{display:inline-flex;align-items:center;padding:3px 8px;border-radius:99px;font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em}
-.badge-accent{background:var(--yellow-bg);color:var(--yellow-dark)}
+/* hint bar - desktop only */
+.hint{background:var(--surface);border-top:1px solid var(--border);padding:5px 14px;
+  font-size:.68rem;color:var(--text3);display:flex;gap:16px;flex-wrap:wrap;flex-shrink:0}
+.hint span{display:flex;align-items:center;gap:4px}
+kbd{background:var(--surface2);border:1px solid var(--border-dark);border-radius:3px;padding:1px 5px;
+  font-size:.62rem;font-family:'DM Mono',monospace;color:var(--text2)}
 
-.snap-indicator{position:absolute;background:var(--accent);border-radius:50%;width:8px;height:8px;pointer-events:none;display:none;transform:translate(-50%,-50%);z-index:10}
-.dim-label{position:absolute;background:var(--brand);color:#fff;font-size:.6rem;font-weight:700;padding:2px 5px;border-radius:4px;pointer-events:none;white-space:nowrap;z-index:5}
-
-.hint-bar{background:var(--surface);border-top:1.5px solid var(--border);padding:6px 16px;font-size:.7rem;color:var(--text3);display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-.hint-bar span{display:flex;align-items:center;gap:4px}
-kbd{background:var(--surface2);border:1px solid var(--border-dark);border-radius:4px;padding:1px 5px;font-size:.65rem;font-family:'DM Mono',monospace;color:var(--text2)}
-
-.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--brand);color:#fff;padding:10px 18px;border-radius:99px;font-size:.8rem;font-weight:600;box-shadow:var(--sh-lg);z-index:9999;opacity:0;transition:opacity .3s;pointer-events:none}
+/* toast */
+.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:var(--brand);color:#fff;
+  padding:9px 18px;border-radius:99px;font-size:.78rem;font-weight:600;box-shadow:var(--sh-lg);z-index:500;
+  opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap}
 .toast.show{opacity:1}
 
-@media(max-width:640px){
-  .side-panel{display:none}
-  .main-layout{height:calc(100vh - 150px)}
-  .toolbar{gap:5px;padding:8px 10px}
-  .tool-group-label{display:none}
+/* ── RESPONSIVE ── */
+@media(max-width:700px){
+  .left-bar{display:none}
+  .right-panel{display:none}
+  .hint{display:none}
+  .mob-tabbar{display:block}
+  .proj-input{width:100px}
+  .toast{bottom:calc(80px + var(--safe-bottom))}
+}
+@media(min-width:701px){
+  .mob-tabbar{display:none}
+  .mob-drawer-bg{display:none !important}
+  .mob-drawer{display:none !important}
+  .mob-props-sheet{display:none !important}
+  .mob-tool-row{display:none !important}
 }
 </style>
 </head>
 <body>
 
+<!-- TOPBAR -->
 <div class="topbar">
   <div class="topbar-brand">
     <div class="topbar-icon">🏠</div>
     <div>
       <div class="topbar-title">Floor Plan Tool</div>
-      <div class="topbar-sub">Latino Built · Home Energy Assessment</div>
+      <div class="topbar-sub">Latino Built · HEA</div>
     </div>
   </div>
-  <div class="topbar-actions">
-    <button class="btn btn-ghost btn-sm" onclick="exportPDF()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 10v6m0 0l-3-3m3 3l3-3M3 17V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
-      Export PDF
+  <div class="topbar-right">
+    <input id="proj-input" class="proj-input" placeholder="Client / address..."/>
+    <button class="btn btn-ghost btn-sm" onclick="doExport()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+      Export
     </button>
-    <button class="btn btn-primary btn-sm" onclick="openRoomModal()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
-      Add Room
-    </button>
+    <button class="btn btn-primary btn-sm" onclick="openAddRoom()">+ Room</button>
   </div>
 </div>
 
-<div class="toolbar">
-  <div class="tool-group">
-    <span class="tool-group-label">Tool</span>
-    <button class="tool-btn active" id="tool-select" onclick="setTool('select')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 3l14 9-7 1-4 7z"/></svg>
-      Select
-    </button>
-    <button class="tool-btn" id="tool-draw" onclick="setTool('draw')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>
-      Draw Room
-    </button>
-    <button class="tool-btn" id="tool-text" onclick="setTool('text')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h7"/></svg>
-      Note
-    </button>
-  </div>
-  <div class="tool-group">
-    <span class="tool-group-label">Grid</span>
-    <button class="tool-btn active" id="btn-grid" onclick="toggleGrid()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3h7v7H3zM14 3h7v7h-7zM14 14h7v7h-7zM3 14h7v7H3z"/></svg>
-      Grid
-    </button>
-    <select class="tool-btn" id="scale-sel" onchange="setScale(this.value)" style="padding:5px 8px">
-      <option value="20">1ft = 20px</option>
-      <option value="30" selected>1ft = 30px</option>
-      <option value="40">1ft = 40px</option>
-    </select>
-  </div>
-  <div class="tool-group">
-    <span class="tool-group-label">Actions</span>
-    <button class="tool-btn" onclick="undoLast()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 10h10a5 5 0 010 10H9M3 10l4-4M3 10l4 4"/></svg>
-      Undo
-    </button>
-    <button class="tool-btn" onclick="clearAll()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-      Clear
-    </button>
-  </div>
-  <div class="tool-group" style="margin-left:auto">
-    <span class="tool-group-label">Project</span>
-    <input id="proj-name" class="tool-btn" style="min-width:160px;cursor:text;font-weight:500" placeholder="Client name / address..." />
-  </div>
-</div>
+<!-- DESKTOP LAYOUT -->
+<div class="app-body">
 
-<div class="main-layout">
-  <div class="canvas-wrap mode-select" id="canvasWrap">
-    <canvas id="canvas"></canvas>
-    <div class="snap-indicator" id="snapDot"></div>
-  </div>
-
-  <div class="side-panel">
-    <div class="floor-tabs" id="floorTabs">
-      <button class="floor-tab active" data-floor="0" onclick="switchFloor(0)">1st Floor</button>
-      <button class="floor-tab" data-floor="1" onclick="switchFloor(1)">2nd Floor</button>
-      <button class="floor-tab-add" onclick="addFloor()">+ Floor</button>
+  <!-- LEFT SIDEBAR (desktop) -->
+  <div class="left-bar" id="leftBar">
+    <div class="lb-group">
+      <div class="lb-label">Tools</div>
+      <button class="lb-btn active" id="tb-select" onclick="setTool('select')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 3l14 9-7 1-4 7z"/></svg>Select
+      </button>
+      <button class="lb-btn" id="tb-room" onclick="setTool('room')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="1"/></svg>Draw
+      </button>
+      <button class="lb-btn" id="tb-pan" onclick="setTool('pan')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 9l-3 3 3 3M9 5l3-3 3 3M15 19l-3 3-3-3M19 9l3 3-3 3M12 12v.01"/></svg>Pan
+      </button>
     </div>
-
-    <div class="side-hdr">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><path d="M9 22V12h6v10"/></svg>
-      Room Properties
+    <div class="lb-group">
+      <div class="lb-label">Structure</div>
+      <button class="lb-btn" onclick="addElement('door')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="2" width="14" height="20" rx="1"/><path d="M17 12h4"/></svg>Door</button>
+      <button class="lb-btn" onclick="addElement('window')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="6" width="18" height="12" rx="1"/><line x1="12" y1="6" x2="12" y2="18"/><line x1="3" y1="12" x2="21" y2="12"/></svg>Window</button>
+      <button class="lb-btn" onclick="addElement('stairs')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h4v-4h4v-4h4v-4h4V3"/></svg>Stairs</button>
     </div>
+    <div class="lb-group">
+      <div class="lb-label">Safety</div>
+      <button class="lb-btn" onclick="addElement('smoke')"><div class="lb-icon">🔴</div>Smoke</button>
+      <button class="lb-btn" onclick="addElement('co')"><div class="lb-icon">🟠</div>CO Det.</button>
+      <button class="lb-btn" onclick="addElement('cosmoke')"><div class="lb-icon">🟡</div>CO+Smoke</button>
+      <button class="lb-btn" onclick="addElement('fireext')"><div class="lb-icon">🧯</div>Fire Ext</button>
+    </div>
+    <div class="lb-group">
+      <div class="lb-label">Mechanical</div>
+      <button class="lb-btn" onclick="addElement('furnace')"><div class="lb-icon">🔆</div>Furnace</button>
+      <button class="lb-btn" onclick="addElement('water')"><div class="lb-icon">🔥</div>Water Htr</button>
+      <button class="lb-btn" onclick="addElement('hvac')"><div class="lb-icon">❄️</div>HVAC</button>
+      <button class="lb-btn" onclick="addElement('heatpump')"><div class="lb-icon">💨</div>Ht Pump</button>
+      <button class="lb-btn" onclick="addElement('minisplit')"><div class="lb-icon">🌀</div>Mini Split</button>
+      <button class="lb-btn" onclick="addElement('outfan')"><div class="lb-icon">🔄</div>Ext Fan</button>
+      <button class="lb-btn" onclick="addElement('exhaust')"><div class="lb-icon">⬆️</div>Exhaust</button>
+      <button class="lb-btn" onclick="addElement('vent')"><div class="lb-icon">▦</div>Vent/Reg</button>
+      <button class="lb-btn" onclick="addElement('ductwork')"><div class="lb-icon">━</div>Ductwork</button>
+    </div>
+    <div class="lb-group">
+      <div class="lb-label">Access</div>
+      <button class="lb-btn" onclick="addElement('crawlentry')"><div class="lb-icon">🔲</div>Crawl Entry</button>
+      <button class="lb-btn" onclick="addElement('atticentry')"><div class="lb-icon">🔳</div>Attic Entry</button>
+      <button class="lb-btn" onclick="addElement('electrical')"><div class="lb-icon">⚡</div>Elec Panel</button>
+      <button class="lb-btn" onclick="addElement('gasmeter')"><div class="lb-icon">🟦</div>Gas Meter</button>
+    </div>
+    <div class="lb-group">
+      <div class="lb-label">Insulation</div>
+      <button class="lb-btn" onclick="addElement('insul_wall')"><div class="lb-icon">🧱</div>Wall</button>
+      <button class="lb-btn" onclick="addElement('insul_ceil')"><div class="lb-icon">⬜</div>Ceiling</button>
+      <button class="lb-btn" onclick="addElement('insul_floor')"><div class="lb-icon">▬</div>Floor</button>
+      <button class="lb-btn" onclick="addElement('vapor')"><div class="lb-icon">💧</div>Vapor Barr</button>
+    </div>
+    <div class="lb-group">
+      <div class="lb-label">Furnish</div>
+      <button class="lb-btn" onclick="addElement('sofa')"><div class="lb-icon">🛋️</div>Sofa</button>
+      <button class="lb-btn" onclick="addElement('bed')"><div class="lb-icon">🛏️</div>Bed</button>
+      <button class="lb-btn" onclick="addElement('toilet')"><div class="lb-icon">🚽</div>Toilet</button>
+      <button class="lb-btn" onclick="addElement('sink')"><div class="lb-icon">🚿</div>Sink</button>
+      <button class="lb-btn" onclick="addElement('stove')"><div class="lb-icon">🍳</div>Stove</button>
+      <button class="lb-btn" onclick="addElement('table')"><div class="lb-icon">🪑</div>Table</button>
+      <button class="lb-btn" onclick="addElement('washer')"><div class="lb-icon">🧺</div>W/D</button>
+    </div>
+    <div class="lb-group">
+      <div class="lb-label">Text</div>
+      <button class="lb-btn" onclick="addCustomText()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7V4h16v3M9 20h6M12 4v16"/></svg>Add Text</button>
+      <button class="lb-btn" onclick="addElement('arrow')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>Arrow</button>
+    </div>
+    <div class="lb-group">
+      <div class="lb-label">Edit</div>
+      <button class="lb-btn" onclick="undo()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 10h10a5 5 0 010 10H9M3 10l4-4M3 10l4 4"/></svg>Undo</button>
+      <button class="lb-btn" onclick="deleteSelected()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>Delete</button>
+    </div>
+  </div>
 
-    <div class="side-body">
-      <div id="no-selection" style="text-align:center;padding:20px 10px;color:var(--text3)">
+  <!-- CANVAS AREA -->
+  <div class="canvas-area" id="canvasArea">
+    <!-- Mobile tool row inside canvas area -->
+    <div class="mob-tool-row">
+      <button class="mob-tool-btn active" id="mtb-select" onclick="setTool('select')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 3l14 9-7 1-4 7z"/></svg>Select
+      </button>
+      <button class="mob-tool-btn" id="mtb-room" onclick="setTool('room')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="1"/></svg>Draw Room
+      </button>
+      <button class="mob-tool-btn" id="mtb-pan" onclick="setTool('pan')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 9l-3 3 3 3M9 5l3-3 3 3M15 19l-3 3-3-3M19 9l3 3-3 3"/></svg>Pan
+      </button>
+      <button class="mob-tool-btn" onclick="undo()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 10h10a5 5 0 010 10H9M3 10l4-4M3 10l4 4"/></svg>Undo
+      </button>
+    </div>
+    <canvas id="fp-canvas"></canvas>
+    <div class="zoom-btns">
+      <button class="zoom-btn" onclick="zoom(1.2)">+</button>
+      <button class="zoom-btn" onclick="zoom(0.8)">-</button>
+      <button class="zoom-btn" onclick="resetView()" style="font-size:.6rem;font-weight:800">FIT</button>
+    </div>
+  </div>
+
+  <!-- RIGHT PANEL (desktop) -->
+  <div class="right-panel">
+    <div class="rp-hdr">Properties</div>
+    <div class="rp-body">
+      <div id="rp-empty" style="text-align:center;padding:20px 5px;color:var(--text3)">
         <div style="font-size:2rem;margin-bottom:8px">🖱️</div>
-        <div style="font-size:.78rem;font-weight:600">Click a room to edit</div>
-        <div style="font-size:.7rem;margin-top:4px">or use Draw Room to sketch</div>
+        <div style="font-size:.76rem;font-weight:600;margin-bottom:4px">Click to select</div>
+        <div style="font-size:.68rem">Draw a room or add elements from the left panel</div>
       </div>
-
-      <div id="selection-panel" style="display:none">
-        <div class="prop-section">
-          <div class="prop-title">Room Info</div>
-          <div class="prop-row">
-            <div class="prop-label">Room Name</div>
-            <input class="prop-input" id="prop-name" placeholder="e.g. Living Room" oninput="updateSelectedProp('name',this.value)"/>
+      <div id="rp-room" style="display:none">
+        <div class="rp-section">
+          <div class="rp-title">Room</div>
+          <div class="rp-row"><div class="rp-label">Name</div><input class="rp-input" id="rp-name" oninput="updateProp('name',this.value)" placeholder="Room name"/></div>
+          <div class="rp-grid2">
+            <div class="rp-row"><div class="rp-label">W (ft)</div><input class="rp-input" id="rp-w" type="number" min="1" oninput="updateDim('w',this.value)"/></div>
+            <div class="rp-row"><div class="rp-label">L (ft)</div><input class="rp-input" id="rp-h" type="number" min="1" oninput="updateDim('h',this.value)"/></div>
           </div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-            <div class="prop-row">
-              <div class="prop-label">Width (ft)</div>
-              <input class="prop-input" id="prop-w" type="number" min="1" oninput="updateSelectedDim('w',this.value)"/>
-            </div>
-            <div class="prop-row">
-              <div class="prop-label">Length (ft)</div>
-              <input class="prop-input" id="prop-h" type="number" min="1" oninput="updateSelectedDim('h',this.value)"/>
-            </div>
-          </div>
-          <div class="prop-row" style="margin-top:4px">
-            <div class="prop-label">Sq Ft</div>
-            <input class="prop-input" id="prop-sqft" disabled style="font-weight:700;color:var(--brand)"/>
-          </div>
+          <div class="rp-row"><div class="rp-label">Area</div><input class="rp-input" id="rp-sqft" disabled/></div>
         </div>
-
-        <div class="prop-section">
-          <div class="prop-title">Color</div>
-          <div class="color-row" id="colorRow"></div>
-        </div>
-
-        <div class="prop-section">
-          <div class="prop-title">Notes</div>
-          <textarea class="prop-input" id="prop-notes" rows="4" placeholder="HVAC access, insulation type, ductwork, issues..." style="resize:vertical" oninput="updateSelectedProp('notes',this.value)"></textarea>
-        </div>
-
-        <div class="prop-section">
-          <div class="prop-title">HVAC / Energy</div>
-          <div class="prop-row">
-            <div class="prop-label">System Type</div>
-            <select class="prop-input" id="prop-hvac" onchange="updateSelectedProp('hvac',this.value)">
-              <option value="">None / Unknown</option>
-              <option value="Forced Air">Forced Air</option>
-              <option value="Heat Pump">Heat Pump</option>
-              <option value="Mini Split">Mini Split</option>
-              <option value="Baseboard">Baseboard</option>
-              <option value="Radiant">Radiant</option>
-              <option value="None">No Heating</option>
+        <div class="rp-section"><div class="rp-title">Color</div><div class="color-swatches" id="colorSwatches"></div></div>
+        <div class="rp-section"><div class="rp-title">Notes</div><textarea class="rp-input" id="rp-notes" rows="3" placeholder="HVAC, insulation, issues..." style="resize:vertical" oninput="updateProp('notes',this.value)"></textarea></div>
+        <div class="rp-section">
+          <div class="rp-title">Systems</div>
+          <div class="rp-row"><div class="rp-label">HVAC</div>
+            <select class="rp-input" id="rp-hvac" onchange="updateProp('hvac',this.value)">
+              <option value="">Unknown</option><option>Forced Air</option><option>Heat Pump</option><option>Mini Split</option><option>Baseboard</option><option>Radiant</option><option>None</option>
             </select>
           </div>
-          <div class="prop-row">
-            <div class="prop-label">Insulation</div>
-            <select class="prop-input" id="prop-insul" onchange="updateSelectedProp('insul',this.value)">
-              <option value="">Unknown</option>
-              <option value="None">None</option>
-              <option value="R-11">R-11</option>
-              <option value="R-19">R-19</option>
-              <option value="R-30">R-30</option>
-              <option value="R-38">R-38</option>
-              <option value="Spray Foam">Spray Foam</option>
+          <div class="rp-row"><div class="rp-label">Insulation</div>
+            <select class="rp-input" id="rp-insul" onchange="updateProp('insul',this.value)">
+              <option value="">Unknown</option><option>None</option><option>R-11</option><option>R-19</option><option>R-30</option><option>R-38</option><option>Spray Foam</option>
             </select>
           </div>
         </div>
-
-        <button class="btn btn-danger btn-sm" onclick="deleteSelected()" style="width:100%;justify-content:center">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-          Delete Room
-        </button>
+        <button class="btn btn-danger btn-sm" onclick="deleteSelected()" style="width:100%;justify-content:center">Delete Room</button>
       </div>
-
-      <div class="prop-section" style="margin-top:16px">
-        <div class="prop-title">All Rooms</div>
+      <div id="rp-elem" style="display:none">
+        <div class="rp-section">
+          <div class="rp-title">Element</div>
+          <div class="rp-row"><div class="rp-label">Label</div><input class="rp-input" id="rp-elabel" oninput="updateElemLabel(this.value)" placeholder="Label below symbol"/></div>
+          <div class="rp-row"><div class="rp-label">Rotate</div>
+            <select class="rp-input" id="rp-rot" onchange="updateProp('rot',parseInt(this.value))">
+              <option value="0">0°</option><option value="90">90°</option><option value="180">180°</option><option value="270">270°</option>
+            </select>
+          </div>
+        </div>
+        <div class="rp-section" id="rp-textprops" style="display:none">
+          <div class="rp-title">Text Settings</div>
+          <div class="rp-row"><div class="rp-label">Text</div><input class="rp-input" id="rp-customtext" oninput="updateCustomTextVal(this.value)" placeholder="Your text..."/></div>
+          <div class="rp-grid2">
+            <div class="rp-row"><div class="rp-label">Size</div><input class="rp-input" id="rp-fontsize" type="number" value="13" min="8" max="36" oninput="updateProp('fontSize',parseInt(this.value));render()"/></div>
+            <div class="rp-row"><div class="rp-label">Color</div><input type="color" class="rp-input" id="rp-textcolor" value="#1C1209" style="padding:3px;height:36px" onchange="updateProp('textColor',this.value);render()"/></div>
+          </div>
+          <div class="rp-row" style="flex-direction:row;align-items:center;gap:8px"><input type="checkbox" id="rp-bold" onchange="updateProp('textBold',this.checked);render()" style="width:16px;height:16px;accent-color:var(--brand)"/><label class="rp-label" for="rp-bold" style="cursor:pointer">Bold</label></div>
+        </div>
+        <div class="rp-section" id="rp-arrowprops" style="display:none">
+          <div class="rp-title">Arrow</div>
+          <div class="rp-row"><div class="rp-label">Label</div><input class="rp-input" id="rp-arrowlabel" oninput="updateProp('arrowLabel',this.value);render()" placeholder="Arrow label..."/></div>
+          <div class="rp-row"><div class="rp-label">Color</div><input type="color" class="rp-input" id="rp-arrowcolor" value="#374151" style="padding:3px;height:36px" onchange="updateProp('arrowColor',this.value);render()"/></div>
+        </div>
+        <div class="rp-section"><div class="rp-title">Notes</div><textarea class="rp-input" id="rp-enotes" rows="2" placeholder="Field notes..." style="resize:vertical" oninput="updateProp('notes',this.value)"></textarea></div>
+        <button class="btn btn-danger btn-sm" onclick="deleteSelected()" style="width:100%;justify-content:center">Delete Element</button>
+      </div>
+      <div class="rp-section" style="margin-top:14px">
+        <div class="rp-title">Rooms on this floor</div>
         <div class="room-list" id="roomList"></div>
-        <div id="no-rooms" style="font-size:.72rem;color:var(--text3);text-align:center;padding:10px">No rooms yet</div>
-        <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border)">
-          <div style="font-size:.7rem;color:var(--text3);display:flex;justify-content:space-between">
-            <span>Total area:</span>
-            <span style="font-weight:700;color:var(--brand)" id="totalSqft">0 sq ft</span>
-          </div>
+        <div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border);display:flex;justify-content:space-between;font-size:.7rem;color:var(--text3)">
+          <span>Total area</span><span style="font-weight:800;color:var(--brand)" id="totalArea">0 sqft</span>
         </div>
       </div>
     </div>
   </div>
 </div>
 
-<div class="hint-bar">
-  <span><kbd>Draw Room</kbd> click and drag to draw</span>
-  <span><kbd>Select</kbd> click room to edit properties</span>
-  <span><kbd>Drag</kbd> move rooms around</span>
-  <span><kbd>Delete</kbd> key removes selected room</span>
+<!-- HINT BAR (desktop) -->
+<div class="hint">
+  <span><kbd>Draw</kbd> drag to create room</span>
+  <span><kbd>Select</kbd> click + drag to move</span>
+  <span><kbd>Del</kbd> remove selected</span>
+  <span><kbd>Scroll</kbd> zoom</span>
 </div>
 
-<div class="overlay" id="roomModal">
+<!-- MOBILE BOTTOM TAB BAR -->
+<div class="mob-tabbar">
+  <div class="mob-tabs">
+    <button class="mob-tab" onclick="openMobDrawer('structure')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px"><rect x="3" y="3" width="18" height="18" rx="1"/></svg>
+      Structure
+    </button>
+    <button class="mob-tab" onclick="openMobDrawer('safety')">
+      <div class="mob-tab-icon">🔴</div>
+      Safety
+    </button>
+    <button class="mob-tab" onclick="openMobDrawer('mechanical')">
+      <div class="mob-tab-icon">❄️</div>
+      Mechanical
+    </button>
+    <button class="mob-tab" onclick="openMobDrawer('insulation')">
+      <div class="mob-tab-icon">🧱</div>
+      Insulation
+    </button>
+    <button class="mob-tab" onclick="openMobDrawer('furnish')">
+      <div class="mob-tab-icon">🛋️</div>
+      Furnish
+    </button>
+    <button class="mob-tab" onclick="openMobDrawer('text')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px"><path d="M4 7V4h16v3M9 20h6M12 4v16"/></svg>
+      Text
+    </button>
+  </div>
+</div>
+
+<!-- MOBILE ELEMENT DRAWER -->
+<div class="mob-drawer-bg" id="mobDrawerBg" onclick="closeMobDrawer()"></div>
+<div class="mob-drawer" id="mobDrawer">
+  <div class="mob-drawer-handle"></div>
+  <div class="mob-drawer-hdr">
+    <div class="mob-drawer-title" id="mobDrawerTitle">Add Element</div>
+    <button class="mob-drawer-close" onclick="closeMobDrawer()">✕</button>
+  </div>
+  <div class="mob-drawer-body" id="mobDrawerBody"></div>
+</div>
+
+<!-- MOBILE PROPERTIES SHEET -->
+<div class="mob-props-sheet" id="mobPropsSheet">
+  <div class="mob-ps-handle"></div>
+  <div class="mob-ps-hdr">
+    <div class="mob-ps-title" id="mobPsTitle">Properties</div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-danger btn-sm" onclick="deleteSelected();closeMobProps()">Delete</button>
+      <button class="mob-drawer-close" onclick="closeMobProps()">✕</button>
+    </div>
+  </div>
+  <div class="mob-ps-body" id="mobPsBody"></div>
+</div>
+
+<!-- ADD ROOM MODAL -->
+<div class="overlay" id="addRoomOverlay">
   <div class="modal">
     <div class="modal-hdr">
-      <div class="modal-title">Add New Room</div>
-      <button class="modal-close" onclick="closeRoomModal()">&#x2715;</button>
+      <div class="modal-title">Add Room</div>
+      <button class="modal-close" onclick="closeAddRoom()">✕</button>
     </div>
-    <div class="fg">
-      <label class="flabel">Room Name</label>
-      <input class="finput" id="m-name" placeholder="e.g. Master Bedroom, Kitchen, Crawlspace..." />
-    </div>
+    <div class="fg"><label class="flabel">Room Name</label><input class="finput" id="m-rname" placeholder="e.g. Living Room, Crawlspace..."/></div>
     <div class="fg2">
-      <div class="fg" style="margin:0">
-        <label class="flabel">Width (ft)</label>
-        <input class="finput" id="m-w" type="number" value="12" min="1"/>
-      </div>
-      <div class="fg" style="margin:0">
-        <label class="flabel">Length (ft)</label>
-        <input class="finput" id="m-h" type="number" value="10" min="1"/>
-      </div>
+      <div class="fg" style="margin:0"><label class="flabel">Width (ft)</label><input class="finput" id="m-rw" type="number" value="12" min="1"/></div>
+      <div class="fg" style="margin:0"><label class="flabel">Length (ft)</label><input class="finput" id="m-rl" type="number" value="10" min="1"/></div>
     </div>
-    <div class="fg">
-      <label class="flabel">Room Type</label>
-      <select class="finput" id="m-type">
-        <option value="living">Living / Common Area</option>
-        <option value="bedroom">Bedroom</option>
-        <option value="kitchen">Kitchen</option>
-        <option value="bathroom">Bathroom</option>
-        <option value="garage">Garage</option>
-        <option value="crawl">Crawlspace / Basement</option>
-        <option value="attic">Attic</option>
-        <option value="other">Other</option>
+    <div class="fg"><label class="flabel">Type</label>
+      <select class="finput" id="m-rtype">
+        <option value="living">Living / Common</option><option value="bedroom">Bedroom</option>
+        <option value="kitchen">Kitchen</option><option value="bathroom">Bathroom</option>
+        <option value="garage">Garage</option><option value="crawl">Crawlspace</option>
+        <option value="attic">Attic</option><option value="other">Other</option>
       </select>
     </div>
     <div class="form-actions">
-      <button class="btn btn-outline btn-sm" onclick="closeRoomModal()">Cancel</button>
-      <button class="btn btn-primary btn-sm" onclick="addRoomFromModal()">Add Room</button>
+      <button class="btn btn-outline btn-sm" onclick="closeAddRoom()">Cancel</button>
+      <button class="btn btn-primary btn-sm" onclick="confirmAddRoom()">Add Room</button>
     </div>
   </div>
 </div>
@@ -357,470 +513,571 @@ kbd{background:var(--surface2);border:1px solid var(--border-dark);border-radius
 <div class="toast" id="toast"></div>
 
 <script>
-const COLORS = {
-  living:'#FEF3C7', bedroom:'#DBEAFE', kitchen:'#DCFCE7',
-  bathroom:'#F3E8FF', garage:'#F3F4F6', crawl:'#E5E7EB',
-  attic:'#FEE2E2', other:'#FDF8F4'
-};
-const STROKES = {
-  living:'#D97706', bedroom:'#1D4ED8', kitchen:'#16A34A',
-  bathroom:'#7C3AED', garage:'#6B7280', crawl:'#4B5563',
-  attic:'#DC2626', other:'#9C7B6B'
-};
-const TYPE_COLORS = ['#FEF3C7','#DBEAFE','#DCFCE7','#F3E8FF','#FEE2E2','#F3F4F6','#FDF8F4','#E5E7EB'];
-const TYPE_STROKES = ['#D97706','#1D4ED8','#16A34A','#7C3AED','#DC2626','#6B7280','#9C7B6B','#4B5563'];
-
-let state = {
-  floors: [{rooms:[], notes:[]}],
-  currentFloor: 0,
-  tool: 'select',
-  selected: null,
-  scale: 30,
-  showGrid: true,
-  history: [],
-  drawing: false,
-  drawStart: null,
-  drawRect: null,
-  dragging: false,
-  dragOffset: null,
-  pan: {x:40, y:40},
-  panning: false,
-  panStart: null
+const FILLS={living:'#FFFBEB',bedroom:'#EFF6FF',kitchen:'#F0FDF4',bathroom:'#FAF5FF',garage:'#F9FAFB',crawl:'#E5E7EB',attic:'#FFF1F2',other:'#FDFAF7'};
+const SWATCH_FILLS=['#FFFBEB','#EFF6FF','#F0FDF4','#FAF5FF','#F9FAFB','#FFF1F2','#DCFCE7','#DBEAFE'];
+const SWATCH_STROKES=['#D97706','#2563EB','#16A34A','#7C3AED','#6B7280','#DC2626','#22C55E','#3B82F6'];
+const ELEM_DEFS={
+  door:{w:40,h:40,label:'Door'},window:{w:60,h:20,label:'Window'},stairs:{w:60,h:80,label:'Stairs'},
+  smoke:{w:30,h:30,label:'Smoke Det.'},co:{w:30,h:30,label:'CO Det.'},cosmoke:{w:30,h:30,label:'CO+Smoke'},fireext:{w:24,h:40,label:'Fire Ext.'},
+  furnace:{w:60,h:60,label:'Furnace'},water:{w:40,h:60,label:'Water Htr'},hvac:{w:60,h:50,label:'HVAC Unit'},
+  heatpump:{w:60,h:40,label:'Heat Pump'},minisplit:{w:80,h:24,label:'Mini Split'},
+  outfan:{w:40,h:40,label:'Ext. Fan'},exhaust:{w:30,h:30,label:'Exhaust'},vent:{w:40,h:20,label:'Vent/Reg'},ductwork:{w:100,h:20,label:'Ductwork'},
+  crawlentry:{w:30,h:30,label:'Crawl Entry'},atticentry:{w:30,h:30,label:'Attic Entry'},electrical:{w:30,h:40,label:'Elec. Panel'},gasmeter:{w:30,h:30,label:'Gas Meter'},
+  insul_wall:{w:80,h:20,label:'Wall Insul.'},insul_ceil:{w:80,h:20,label:'Ceil. Insul.'},insul_floor:{w:80,h:20,label:'Floor Insul.'},vapor:{w:80,h:16,label:'Vapor Barrier'},
+  sofa:{w:80,h:40,label:'Sofa'},bed:{w:60,h:80,label:'Bed'},toilet:{w:36,h:48,label:'Toilet'},sink:{w:36,h:36,label:'Sink'},stove:{w:56,h:56,label:'Stove'},table:{w:70,h:50,label:'Table'},washer:{w:50,h:50,label:'W/D'},
+  arrow:{w:60,h:20,label:''},customtext:{w:80,h:24,label:''},
 };
 
-const canvas = document.getElementById('canvas');
-const ctx = canvas.getContext('2d');
-const wrap = document.getElementById('canvasWrap');
+const MOB_CATEGORIES={
+  structure:{title:'Structure',items:[
+    {type:'door',icon:'🚪',label:'Door'},{type:'window',icon:'🪟',label:'Window'},{type:'stairs',icon:'🪜',label:'Stairs'}
+  ]},
+  safety:{title:'Safety Devices',items:[
+    {type:'smoke',icon:'🔴',label:'Smoke Det.'},{type:'co',icon:'🟠',label:'CO Det.'},{type:'cosmoke',icon:'🟡',label:'CO+Smoke'},{type:'fireext',icon:'🧯',label:'Fire Ext.'}
+  ]},
+  mechanical:{title:'Mechanical Systems',items:[
+    {type:'furnace',icon:'🔆',label:'Furnace'},{type:'water',icon:'🔥',label:'Water Htr'},{type:'hvac',icon:'❄️',label:'HVAC'},{type:'heatpump',icon:'💨',label:'Heat Pump'},
+    {type:'minisplit',icon:'🌀',label:'Mini Split'},{type:'outfan',icon:'🔄',label:'Ext. Fan'},{type:'exhaust',icon:'⬆️',label:'Exhaust'},{type:'vent',icon:'▦',label:'Vent/Reg'},
+    {type:'ductwork',icon:'━',label:'Ductwork'},{type:'crawlentry',icon:'🔲',label:'Crawl Entry'},{type:'atticentry',icon:'🔳',label:'Attic Entry'},{type:'electrical',icon:'⚡',label:'Elec Panel'},
+    {type:'gasmeter',icon:'🟦',label:'Gas Meter'}
+  ]},
+  insulation:{title:'Insulation',items:[
+    {type:'insul_wall',icon:'🧱',label:'Wall Insul.'},{type:'insul_ceil',icon:'⬜',label:'Ceil. Insul.'},{type:'insul_floor',icon:'▬',label:'Floor Insul.'},{type:'vapor',icon:'💧',label:'Vapor Barrier'}
+  ]},
+  furnish:{title:'Furniture',items:[
+    {type:'sofa',icon:'🛋️',label:'Sofa'},{type:'bed',icon:'🛏️',label:'Bed'},{type:'toilet',icon:'🚽',label:'Toilet'},{type:'sink',icon:'🚿',label:'Sink'},
+    {type:'stove',icon:'🍳',label:'Stove'},{type:'table',icon:'🪑',label:'Table'},{type:'washer',icon:'🧺',label:'W/D'}
+  ]},
+  text:{title:'Labels & Text',items:[
+    {type:'customtext',icon:'T',label:'Custom Text'},{type:'arrow',icon:'→',label:'Arrow'}
+  ]}
+};
+
+let floors=[{rooms:[],elems:[]}];
+let curFloor=0,tool='select',selected=null,history=[];
+let view={x:60,y:60,scale:1};
+let drawing=false,drawRect=null,dragging=false,dragOff={x:0,y:0};
+let panStart=null,lastTouches=null;
+
+const canvas=document.getElementById('fp-canvas');
+const ctx=canvas.getContext('2d');
+const area=document.getElementById('canvasArea');
+const GRID=20;
+
+function getFloor(){return floors[curFloor];}
+function getRooms(){return getFloor().rooms;}
+function getElems(){return getFloor().elems;}
 
 function resize(){
-  canvas.width = wrap.clientWidth;
-  canvas.height = wrap.clientHeight;
+  const tr=area.getBoundingClientRect();
+  // on mobile, subtract the tool row height
+  const toolRow=document.querySelector('.mob-tool-row');
+  const trH=toolRow&&getComputedStyle(toolRow).display!=='none'?toolRow.offsetHeight:0;
+  canvas.width=tr.width;
+  canvas.height=tr.height-trH;
+  canvas.style.top=trH+'px';
   render();
 }
+window.addEventListener('resize',resize);
 
-window.addEventListener('resize', resize);
-resize();
-
-function get rooms(){ return state.floors[state.currentFloor].rooms; }
-function getRooms(){ return state.floors[state.currentFloor].rooms; }
-
-function setTool(t){
-  state.tool = t;
-  state.selected = null;
-  document.querySelectorAll('.tool-btn[id^=tool-]').forEach(b=>b.classList.remove('active'));
-  document.getElementById('tool-'+t).classList.add('active');
-  wrap.className = 'canvas-wrap mode-'+t;
-  updateSidePanel();
-  render();
+function resetView(){view.x=60;view.y=60;view.scale=1;render();}
+function zoom(f){
+  const cx=canvas.width/2,cy=canvas.height/2;
+  const wx=(cx-view.x)/view.scale,wy=(cy-view.y)/view.scale;
+  view.scale=Math.max(0.25,Math.min(5,view.scale*f));
+  view.x=cx-wx*view.scale;view.y=cy-wy*view.scale;render();
 }
+function toWorld(cx,cy){return{x:(cx-view.x)/view.scale,y:(cy-view.y)/view.scale};}
+function snapW(v){return Math.round(v/GRID)*GRID;}
 
-function setScale(v){ state.scale = parseInt(v); render(); }
-
-function toggleGrid(){
-  state.showGrid = !state.showGrid;
-  document.getElementById('btn-grid').classList.toggle('active', state.showGrid);
-  render();
-}
-
-function switchFloor(i){
-  state.currentFloor = i;
-  state.selected = null;
-  document.querySelectorAll('.floor-tab').forEach((b,idx)=>b.classList.toggle('active', idx===i));
-  updateSidePanel();
-  updateRoomList();
-  render();
-}
-
-function addFloor(){
-  state.floors.push({rooms:[], notes:[]});
-  const tabs = document.getElementById('floorTabs');
-  const addBtn = tabs.querySelector('.floor-tab-add');
-  const n = state.floors.length;
-  const btn = document.createElement('button');
-  btn.className = 'floor-tab';
-  btn.dataset.floor = n-1;
-  btn.textContent = n+'th Floor';
-  btn.onclick = ()=>switchFloor(n-1);
-  tabs.insertBefore(btn, addBtn);
-  switchFloor(n-1);
-}
-
+// ── RENDER ──────────────────────────────────────────────────────────
 function render(){
-  const w = canvas.width, h = canvas.height;
-  ctx.clearRect(0,0,w,h);
-  ctx.fillStyle = '#F0EBE5';
-  ctx.fillRect(0,0,w,h);
-
-  if(state.showGrid){
-    const gs = state.scale;
-    ctx.strokeStyle = 'rgba(107,45,15,0.08)';
-    ctx.lineWidth = 0.5;
-    for(let x = (state.pan.x % gs); x < w; x+=gs){ ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,h); ctx.stroke(); }
-    for(let y = (state.pan.y % gs); y < h; y+=gs){ ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(w,y); ctx.stroke(); }
-    ctx.strokeStyle = 'rgba(107,45,15,0.15)';
-    ctx.lineWidth = 1;
-    const big = gs*5;
-    for(let x = (state.pan.x % big); x < w; x+=big){ ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,h); ctx.stroke(); }
-    for(let y = (state.pan.y % big); y < h; y+=big){ ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(w,y); ctx.stroke(); }
-  }
-
-  getRooms().forEach((room,i)=>{
-    const rx = room.x + state.pan.x;
-    const ry = room.y + state.pan.y;
-    const rw = room.w, rh = room.h;
-    const sel = state.selected === i;
-
-    ctx.save();
-    if(sel){ ctx.shadowColor = 'rgba(232,122,42,0.4)'; ctx.shadowBlur = 12; }
-    ctx.fillStyle = room.fill || '#FEF3C7';
-    ctx.strokeStyle = sel ? '#E87A2A' : (room.stroke || '#D97706');
-    ctx.lineWidth = sel ? 2.5 : 1.5;
-    roundRect(ctx, rx, ry, rw, rh, 6);
-    ctx.fill();
-    ctx.stroke();
-    ctx.restore();
-
-    if(sel){
-      ctx.fillStyle = '#E87A2A';
-      [[rx,ry],[rx+rw,ry],[rx,ry+rh],[rx+rw,ry+rh]].forEach(([hx,hy])=>{
-        ctx.beginPath(); ctx.arc(hx,hy,5,0,Math.PI*2); ctx.fill();
-      });
-    }
-
-    const wft = Math.round(room.w/state.scale);
-    const hft = Math.round(room.h/state.scale);
-    const sqft = wft * hft;
-
-    ctx.fillStyle = '#1C1209';
-    ctx.font = `700 ${Math.max(10, Math.min(14, rw/8))}px DM Sans, sans-serif`;
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    const label = room.name || 'Room';
-    if(rw > 40 && rh > 30){
-      ctx.fillText(label, rx+rw/2, ry+rh/2 - 8);
-      ctx.font = `500 ${Math.max(9, Math.min(11, rw/10))}px DM Sans, sans-serif`;
-      ctx.fillStyle = '#5C4033';
-      ctx.fillText(`${wft}x${hft}ft (${sqft} sqft)`, rx+rw/2, ry+rh/2 + 8);
-    }
-
-    ctx.strokeStyle = room.stroke || '#D97706';
-    ctx.lineWidth = 1;
-    ctx.font = '500 9px DM Mono, monospace';
-    ctx.fillStyle = '#5C4033';
-    if(rw > 50){ ctx.fillText(`${wft}ft`, rx+rw/2, ry-6); }
-    if(rh > 50){
-      ctx.save(); ctx.translate(rx-8, ry+rh/2); ctx.rotate(-Math.PI/2);
-      ctx.fillText(`${hft}ft`, 0, 0); ctx.restore();
-    }
-  });
-
-  if(state.drawing && state.drawRect){
-    const {x,y,w:dw,h:dh} = state.drawRect;
-    ctx.fillStyle = 'rgba(232,122,42,0.15)';
-    ctx.strokeStyle = '#E87A2A';
-    ctx.lineWidth = 2;
-    ctx.setLineDash([6,3]);
-    roundRect(ctx, x+state.pan.x, y+state.pan.y, dw, dh, 6);
-    ctx.fill(); ctx.stroke();
+  const W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle='#D9D0C5';ctx.fillRect(0,0,W,H);
+  ctx.save();ctx.strokeStyle='rgba(0,0,0,0.07)';ctx.lineWidth=0.5;
+  const gs=GRID*view.scale,ox=view.x%gs,oy=view.y%gs;
+  for(let x=ox;x<W;x+=gs){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+  for(let y=oy;y<H;y+=gs){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+  ctx.restore();
+  ctx.save();ctx.translate(view.x,view.y);ctx.scale(view.scale,view.scale);
+  getRooms().forEach((r,i)=>drawRoom(r,selected&&selected.type==='room'&&selected.idx===i));
+  getElems().forEach((e,i)=>drawElem(e,selected&&selected.type==='elem'&&selected.idx===i));
+  if(drawing&&drawRect){
+    ctx.fillStyle='rgba(232,122,42,0.12)';ctx.strokeStyle='#E87A2A';ctx.lineWidth=2/view.scale;
+    ctx.setLineDash([6/view.scale,3/view.scale]);
+    ctx.fillRect(drawRect.x,drawRect.y,drawRect.w,drawRect.h);
+    ctx.strokeRect(drawRect.x,drawRect.y,drawRect.w,drawRect.h);
     ctx.setLineDash([]);
-    const wft = Math.round(Math.abs(dw)/state.scale);
-    const hft = Math.round(Math.abs(dh)/state.scale);
-    ctx.fillStyle = '#6B2D0F';
-    ctx.font = '700 11px DM Sans, sans-serif';
-    ctx.textAlign = 'center';
-    ctx.fillText(`${wft} x ${hft} ft`, x+state.pan.x+dw/2, y+state.pan.y+dh/2);
+    const wft=Math.round(drawRect.w/GRID),hft=Math.round(drawRect.h/GRID);
+    ctx.fillStyle='#6B2D0F';ctx.font=`bold ${12/view.scale}px DM Sans,sans-serif`;
+    ctx.textAlign='center';ctx.fillText(`${wft}x${hft}ft`,drawRect.x+drawRect.w/2,drawRect.y+drawRect.h/2);
+  }
+  ctx.restore();
+}
+
+function drawRoom(r,sel){
+  const ww=sel?5:3.5;
+  ctx.shadowColor=sel?'rgba(232,122,42,0.4)':'rgba(0,0,0,0.12)';ctx.shadowBlur=sel?14:5;
+  ctx.fillStyle=r.fill||'#FFFBEB';ctx.fillRect(r.x,r.y,r.w,r.h);
+  ctx.shadowColor='transparent';ctx.shadowBlur=0;
+  ctx.strokeStyle='#3D2510';ctx.lineWidth=ww;
+  ctx.strokeRect(r.x+ww/2,r.y+ww/2,r.w-ww,r.h-ww);
+  if(sel){
+    ctx.strokeStyle='#E87A2A';ctx.lineWidth=1.5;ctx.setLineDash([5,3]);
+    ctx.strokeRect(r.x-4,r.y-4,r.w+8,r.h+8);ctx.setLineDash([]);
+    ctx.fillStyle='#E87A2A';
+    [[r.x,r.y],[r.x+r.w,r.y],[r.x,r.y+r.h],[r.x+r.w,r.y+r.h]].forEach(([hx,hy])=>{ctx.beginPath();ctx.arc(hx,hy,5/view.scale,0,Math.PI*2);ctx.fill();});
+  }
+  const fs=Math.max(8,Math.min(13,r.w/9));
+  const wft=Math.round(r.w/GRID),hft=Math.round(r.h/GRID);
+  if(r.w>50&&r.h>40){
+    ctx.fillStyle='#2D1A0A';ctx.font=`700 ${fs}px DM Sans,sans-serif`;ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText(r.name||'Room',r.x+r.w/2,r.y+r.h/2-fs*0.7);
+    ctx.font=`500 ${Math.max(7,fs*0.75)}px DM Sans,sans-serif`;ctx.fillStyle='#7B5040';
+    ctx.fillText(`${wft}x${hft}ft · ${wft*hft}sqft`,r.x+r.w/2,r.y+r.h/2+fs*0.7);
+  }
+  ctx.fillStyle='#7B5040';ctx.font=`500 ${Math.max(6,9/view.scale)}px DM Mono,monospace`;
+  ctx.textAlign='center';ctx.textBaseline='bottom';
+  if(r.w>40)ctx.fillText(`${wft}ft`,r.x+r.w/2,r.y-3);
+  ctx.textAlign='right';ctx.textBaseline='middle';
+  if(r.h>40)ctx.fillText(`${hft}ft`,r.x-4,r.y+r.h/2);
+}
+
+function drawElem(e,sel){
+  ctx.save();
+  ctx.translate(e.x+e.w/2,e.y+e.h/2);ctx.rotate((e.rot||0)*Math.PI/180);ctx.translate(-e.w/2,-e.h/2);
+  const t=e.type,sc=sel?'#E87A2A':'#374151';
+  ctx.strokeStyle=sc;ctx.lineWidth=sel?2:1.5;
+  function box(fill){ctx.fillStyle=fill;ctx.fillRect(0,0,e.w,e.h);ctx.strokeRect(0,0,e.w,e.h);}
+  function circle(fill,cx2,cy2,r){ctx.beginPath();ctx.arc(cx2,cy2,r,0,Math.PI*2);ctx.fillStyle=fill;ctx.fill();ctx.stroke();}
+  function lbl(txt2,color,size,cx2,cy2){ctx.fillStyle=color;ctx.font=`bold ${size}px DM Sans,sans-serif`;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(txt2,cx2,cy2);}
+
+  if(t==='door'){ctx.strokeRect(0,0,e.w,4);ctx.beginPath();ctx.arc(0,0,e.w,0,Math.PI/2);ctx.stroke();}
+  else if(t==='window'){box('#E0F2FE');ctx.beginPath();ctx.moveTo(e.w/3,0);ctx.lineTo(e.w/3,e.h);ctx.stroke();ctx.beginPath();ctx.moveTo(2*e.w/3,0);ctx.lineTo(2*e.w/3,e.h);ctx.stroke();ctx.beginPath();ctx.moveTo(0,e.h/2);ctx.lineTo(e.w,e.h/2);ctx.stroke();}
+  else if(t==='stairs'){for(let i=0;i<5;i++)ctx.strokeRect(i*e.w/5,i*e.h/5,e.w-i*e.w/5,e.h-i*e.h/5);}
+  else if(t==='sofa'){box('#C4A882');ctx.fillStyle='#A0875A';ctx.fillRect(4,4,e.w-8,e.h*0.5);ctx.fillRect(4,e.h*0.6,e.w-8,e.h*0.35);}
+  else if(t==='bed'){box('#DBEAFE');ctx.fillStyle='#BFDBFE';ctx.fillRect(4,4,e.w-8,e.h*0.3);ctx.fillStyle='#EFF6FF';ctx.fillRect(8,e.h*0.38,e.w/2-12,e.h*0.55);ctx.fillRect(e.w/2+4,e.h*0.38,e.w/2-12,e.h*0.55);}
+  else if(t==='toilet'){box('#F1F5F9');ctx.fillStyle='#CBD5E1';ctx.fillRect(2,2,e.w-4,e.h*0.3);ctx.strokeRect(2,2,e.w-4,e.h*0.3);circle('#F1F5F9',e.w/2,e.h*0.65,e.w*0.38);}
+  else if(t==='sink'){box('#E0F2FE');circle('#fff',e.w/2,e.h/2,e.w*0.35);}
+  else if(t==='stove'){box('#F1F5F9');[[0.25,0.25],[0.75,0.25],[0.25,0.75],[0.75,0.75]].forEach(([bx,by])=>circle('#94A3B8',bx*e.w,by*e.h,e.w*0.14));}
+  else if(t==='table'){box('#FEF3C7');[[0.12,0.15],[0.88,0.15],[0.12,0.85],[0.88,0.85]].forEach(([bx,by])=>circle('#A0875A',bx*e.w,by*e.h,4));}
+  else if(t==='washer'){box('#F8FAFC');circle('#BFDBFE',e.w/2,e.h/2,e.w*0.35);}
+  else if(t==='hvac'){box('#ECFDF5');lbl('HVAC','#059669',e.h*0.3,e.w/2,e.h/2);ctx.strokeStyle='#059669';for(let i=1;i<4;i++){ctx.beginPath();ctx.moveTo(i*e.w/4,4);ctx.lineTo(i*e.w/4,e.h-4);ctx.stroke();}}
+  else if(t==='water'){box('#FFF7ED');circle('#FED7AA',e.w/2,e.h*0.42,e.w*0.32);lbl('WH','#C2410C',e.h*0.22,e.w/2,e.h*0.42);ctx.fillStyle='#C2410C';ctx.fillRect(e.w*0.35,e.h*0.72,e.w*0.3,e.h*0.18);}
+  else if(t==='smoke'){circle('#FEE2E2',e.w/2,e.h/2,e.w*0.46);circle('#DC2626',e.w/2,e.h/2,e.w*0.28);lbl('S','#fff',e.h*0.38,e.w/2,e.h/2);}
+  else if(t==='co'){circle('#FEF3C7',e.w/2,e.h/2,e.w*0.46);circle('#D97706',e.w/2,e.h/2,e.w*0.28);lbl('CO','#fff',e.h*0.28,e.w/2,e.h/2);}
+  else if(t==='cosmoke'){circle('#FFFBEB',e.w/2,e.h/2,e.w*0.46);circle('#6B2D0F',e.w/2,e.h/2,e.w*0.28);lbl('C+S','#fff',e.h*0.22,e.w/2,e.h/2);}
+  else if(t==='fireext'){box('#FEE2E2');ctx.fillStyle='#DC2626';ctx.fillRect(e.w*0.3,e.h*0.3,e.w*0.4,e.h*0.55);ctx.fillRect(e.w*0.35,e.h*0.12,e.w*0.3,e.h*0.2);lbl('EXT','#fff',e.h*0.16,e.w/2,e.h*0.6);}
+  else if(t==='furnace'){box('#FFF7ED');ctx.strokeStyle='#C2410C';ctx.strokeRect(4,4,e.w-8,e.h-8);lbl('FURN','#C2410C',e.h*0.22,e.w/2,e.h*0.42);ctx.strokeStyle='#F97316';ctx.lineWidth=1.5;for(let i=0;i<3;i++){ctx.beginPath();ctx.moveTo(e.w*0.25+i*e.w*0.25,e.h*0.62);ctx.quadraticCurveTo(e.w*0.3+i*e.w*0.25,e.h*0.74,e.w*0.25+i*e.w*0.25,e.h*0.84);ctx.stroke();}}
+  else if(t==='heatpump'){box('#EFF6FF');ctx.strokeStyle='#2563EB';ctx.strokeRect(4,4,e.w-8,e.h-8);lbl('HEAT PUMP','#2563EB',e.h*0.22,e.w/2,e.h/2);}
+  else if(t==='minisplit'){box('#EFF6FF');ctx.strokeStyle='#2563EB';ctx.strokeRect(3,3,e.w-6,e.h-6);for(let i=1;i<5;i++){ctx.beginPath();ctx.moveTo(i*e.w/5,4);ctx.lineTo(i*e.w/5,e.h-4);ctx.strokeStyle='#93C5FD';ctx.lineWidth=1;ctx.stroke();}lbl('MINI SPLIT','#1D4ED8',e.h*0.4,e.w/2,e.h/2);}
+  else if(t==='outfan'){circle('#F0FDF4',e.w/2,e.h/2,e.w*0.46);circle('#DCFCE7',e.w/2,e.h/2,e.w*0.3);ctx.strokeStyle='#16A34A';for(let i=0;i<6;i++){const a=i*Math.PI/3;ctx.beginPath();ctx.moveTo(e.w/2+Math.cos(a)*e.w*0.14,e.h/2+Math.sin(a)*e.h*0.14);ctx.lineTo(e.w/2+Math.cos(a)*e.w*0.44,e.h/2+Math.sin(a)*e.h*0.44);ctx.stroke();}lbl('FAN','#15803D',e.h*0.28,e.w/2,e.h/2);}
+  else if(t==='exhaust'){circle('#F3F4F6',e.w/2,e.h/2,e.w*0.46);ctx.strokeStyle='#6B7280';[0,1,2,3].forEach(i=>{const a=i*Math.PI/2;ctx.beginPath();ctx.moveTo(e.w/2,e.h/2);ctx.lineTo(e.w/2+Math.cos(a)*e.w*0.38,e.h/2+Math.sin(a)*e.h*0.38);ctx.stroke();});circle('#6B7280',e.w/2,e.h/2,e.w*0.1);}
+  else if(t==='vent'){box('#F9FAFB');const step=e.w/5;for(let i=0;i<5;i++){ctx.fillStyle=i%2===0?'#D1D5DB':'#F9FAFB';ctx.fillRect(i*step,2,step,e.h-4);}ctx.strokeRect(0,0,e.w,e.h);}
+  else if(t==='ductwork'){box('#E5E7EB');ctx.strokeStyle='#9CA3AF';ctx.lineWidth=1;ctx.setLineDash([4,3]);ctx.beginPath();ctx.moveTo(0,e.h/2);ctx.lineTo(e.w,e.h/2);ctx.stroke();ctx.setLineDash([]);lbl('DUCT','#6B7280',e.h*0.55,e.w/2,e.h/2);}
+  else if(t==='crawlentry'){box('#E5E7EB');ctx.strokeStyle='#4B5563';ctx.lineWidth=2;ctx.strokeRect(3,3,e.w-6,e.h-6);ctx.setLineDash([3,2]);ctx.beginPath();ctx.moveTo(3,3);ctx.lineTo(e.w-3,e.h-3);ctx.stroke();ctx.beginPath();ctx.moveTo(e.w-3,3);ctx.lineTo(3,e.h-3);ctx.stroke();ctx.setLineDash([]);}
+  else if(t==='atticentry'){box('#FEF3C7');ctx.strokeStyle='#D97706';ctx.lineWidth=2;ctx.strokeRect(3,3,e.w-6,e.h-6);ctx.setLineDash([3,2]);ctx.beginPath();ctx.moveTo(3,3);ctx.lineTo(e.w-3,e.h-3);ctx.stroke();ctx.beginPath();ctx.moveTo(e.w-3,3);ctx.lineTo(3,e.h-3);ctx.stroke();ctx.setLineDash([]);}
+  else if(t==='electrical'){box('#FFFBEB');ctx.strokeStyle='#D97706';ctx.lineWidth=2;ctx.strokeRect(3,3,e.w-6,e.h-6);lbl('ELEC','#92400E',e.h*0.22,e.w/2,e.h*0.4);lbl('PANEL','#92400E',e.h*0.22,e.w/2,e.h*0.65);ctx.fillStyle='#FCD34D';ctx.fillRect(e.w*0.35,e.h*0.78,e.w*0.3,e.h*0.12);}
+  else if(t==='gasmeter'){circle('#DBEAFE',e.w/2,e.h/2,e.w*0.46);circle('#3B82F6',e.w/2,e.h/2,e.w*0.3);lbl('GAS','#fff',e.h*0.3,e.w/2,e.h/2);}
+  else if(t==='insul_wall'||t==='insul_ceil'||t==='insul_floor'){
+    const ic=t==='insul_ceil'?'#FEF3C7':t==='insul_floor'?'#DCFCE7':'#DBEAFE';
+    const is=t==='insul_ceil'?'#D97706':t==='insul_floor'?'#16A34A':'#2563EB';
+    box(ic);ctx.fillStyle=is;ctx.globalAlpha=0.35;
+    for(let i=0;i<Math.floor(e.w/8);i++){ctx.beginPath();ctx.arc(4+i*8,e.h/2,3.5,0,Math.PI);ctx.fill();}
+    ctx.globalAlpha=1;ctx.strokeStyle=is;ctx.strokeRect(0,0,e.w,e.h);
+    lbl(t==='insul_ceil'?'CEIL':t==='insul_floor'?'FLOOR':'WALL',is,e.h*0.5,e.w/2,e.h*0.78);
+  }
+  else if(t==='vapor'){box('#EFF6FF');ctx.strokeStyle='#3B82F6';ctx.lineWidth=2;ctx.setLineDash([4,3]);ctx.beginPath();ctx.moveTo(0,e.h/2);ctx.lineTo(e.w,e.h/2);ctx.stroke();ctx.setLineDash([]);}
+  else if(t==='customtext'){
+    if(e.customText){ctx.fillStyle=e.textColor||'#1C1209';ctx.font=`${e.textBold?'bold ':''}${e.fontSize||13}px DM Sans,sans-serif`;ctx.textAlign='left';ctx.textBaseline='top';ctx.fillText(e.customText,2,2);}
+    if(sel){ctx.strokeStyle='#E87A2A';ctx.lineWidth=1;ctx.setLineDash([3,2]);ctx.strokeRect(0,0,e.w,e.h);ctx.setLineDash([]);}
+  }
+  else if(t==='arrow'){
+    ctx.strokeStyle=e.arrowColor||sc;ctx.lineWidth=2.5;
+    ctx.beginPath();ctx.moveTo(0,e.h/2);ctx.lineTo(e.w-10,e.h/2);ctx.stroke();
+    ctx.fillStyle=e.arrowColor||sc;ctx.beginPath();ctx.moveTo(e.w,e.h/2);ctx.lineTo(e.w-12,e.h/2-6);ctx.lineTo(e.w-12,e.h/2+6);ctx.closePath();ctx.fill();
+    if(e.arrowLabel){lbl(e.arrowLabel,e.arrowColor||'#374151',10,e.w/2,e.h/2-10);}
+  }
+  else{box('#F8FAFC');}
+
+  if(e.label&&t!=='customtext'&&t!=='arrow'&&e.w>20){
+    ctx.fillStyle=sel?'#E87A2A':'#5C4033';
+    ctx.font=`600 ${Math.max(7,Math.min(10,e.w/7))}px DM Sans,sans-serif`;
+    ctx.textAlign='center';ctx.textBaseline='top';
+    ctx.fillText(e.label,e.w/2,e.h+3/view.scale);
+  }
+  if(sel&&t!=='customtext'){ctx.strokeStyle='#E87A2A';ctx.lineWidth=1.5;ctx.setLineDash([4,3]);ctx.strokeRect(-4,-4,e.w+8,e.h+8);ctx.setLineDash([]);}
+  ctx.restore();
+}
+
+// ── EVENTS ──────────────────────────────────────────────────────────
+canvas.addEventListener('mousedown',onDown);
+canvas.addEventListener('mousemove',onMove);
+canvas.addEventListener('mouseup',onUp);
+canvas.addEventListener('touchstart',e=>{e.preventDefault();handleTouchStart(e);},{passive:false});
+canvas.addEventListener('touchmove',e=>{e.preventDefault();handleTouchMove(e);},{passive:false});
+canvas.addEventListener('touchend',e=>{e.preventDefault();handleTouchEnd(e);},{passive:false});
+canvas.addEventListener('wheel',onWheel,{passive:false});
+
+function getCanvasOffset(e,touches){
+  const r=canvas.getBoundingClientRect();
+  if(touches){return{cx:touches[0].clientX-r.left,cy:touches[0].clientY-r.top};}
+  return{cx:e.clientX-r.left,cy:e.clientY-r.top};
+}
+
+function hitRoom(wx,wy){const rooms=getRooms();for(let i=rooms.length-1;i>=0;i--){const r=rooms[i];if(wx>=r.x&&wx<=r.x+r.w&&wy>=r.y&&wy<=r.y+r.h)return i;}return-1;}
+function hitElem(wx,wy){const elems=getElems();for(let i=elems.length-1;i>=0;i--){const e=elems[i];if(wx>=e.x&&wx<=e.x+e.w&&wy>=e.y&&wy<=e.y+e.h)return i;}return-1;}
+
+function pointerDown(cx,cy){
+  const w=toWorld(cx,cy);
+  if(tool==='pan'){panStart={vx:view.x,vy:view.y,cx,cy};canvas.className='cur-grabbing';return;}
+  if(tool==='room'){drawing=true;const sx=snapW(w.x),sy=snapW(w.y);drawRect={x:sx,y:sy,w:0,h:0};return;}
+  if(tool==='select'){
+    const ei=hitElem(w.x,w.y);
+    if(ei>=0){selected={type:'elem',idx:ei};const el=getElems()[ei];dragOff={x:w.x-el.x,y:w.y-el.y};dragging=true;updatePanel();openMobPropsIfSelected();render();return;}
+    const ri=hitRoom(w.x,w.y);
+    if(ri>=0){selected={type:'room',idx:ri};const rm=getRooms()[ri];dragOff={x:w.x-rm.x,y:w.y-rm.y};dragging=true;updatePanel();openMobPropsIfSelected();render();return;}
+    selected=null;closeMobProps();updatePanel();render();
   }
 }
-
-function roundRect(c, x, y, w, h, r){
-  c.beginPath();
-  c.moveTo(x+r, y);
-  c.lineTo(x+w-r, y); c.arcTo(x+w, y, x+w, y+r, r);
-  c.lineTo(x+w, y+h-r); c.arcTo(x+w, y+h, x+w-r, y+h, r);
-  c.lineTo(x+r, y+h); c.arcTo(x, y+h, x, y+h-r, r);
-  c.lineTo(x, y+r); c.arcTo(x, y, x+r, y, r);
-  c.closePath();
-}
-
-function snap(v){ return Math.round(v/state.scale)*state.scale; }
-
-function getCanvasPos(e){
-  const rect = canvas.getBoundingClientRect();
-  const cx = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
-  const cy = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
-  return { x: cx - state.pan.x, y: cy - state.pan.y, rawX: cx, rawY: cy };
-}
-
-function hitTest(x, y){
-  const rooms = getRooms();
-  for(let i=rooms.length-1; i>=0; i--){
-    const r = rooms[i];
-    if(x>=r.x && x<=r.x+r.w && y>=r.y && y<=r.y+r.h) return i;
-  }
-  return -1;
-}
-
-canvas.addEventListener('mousedown', onDown);
-canvas.addEventListener('mousemove', onMove);
-canvas.addEventListener('mouseup', onUp);
-canvas.addEventListener('touchstart', e=>{e.preventDefault();onDown(e)},{passive:false});
-canvas.addEventListener('touchmove', e=>{e.preventDefault();onMove(e)},{passive:false});
-canvas.addEventListener('touchend', e=>{e.preventDefault();onUp(e)},{passive:false});
-
-function onDown(e){
-  const pos = getCanvasPos(e);
-  if(state.tool === 'draw'){
-    state.drawing = true;
-    state.drawStart = {x:snap(pos.x), y:snap(pos.y)};
-    state.drawRect = {x:state.drawStart.x, y:state.drawStart.y, w:0, h:0};
-  } else if(state.tool === 'select'){
-    const hit = hitTest(pos.x, pos.y);
-    if(hit >= 0){
-      state.selected = hit;
-      state.dragging = true;
-      const r = getRooms()[hit];
-      state.dragOffset = {x: pos.x - r.x, y: pos.y - r.y};
-    } else {
-      state.selected = null;
-      state.panning = true;
-      state.panStart = {x: pos.rawX - state.pan.x, y: pos.rawY - state.pan.y};
-    }
-    updateSidePanel();
-    render();
-  } else if(state.tool === 'text'){
-    const label = prompt('Enter note:');
-    if(label){
-      getRooms().push({x:snap(pos.x), y:snap(pos.y), w:snap(label.length*8)+40, h:40, name:label, fill:'#FFFBEB', stroke:'#D97706', isNote:true});
-      updateRoomList(); render();
-    }
-  }
-}
-
-function onMove(e){
-  const pos = getCanvasPos(e);
-  if(state.drawing && state.drawStart){
-    const sx = state.drawStart.x, sy = state.drawStart.y;
-    const ex = snap(pos.x), ey = snap(pos.y);
-    state.drawRect = {
-      x: Math.min(sx,ex), y: Math.min(sy,ey),
-      w: Math.abs(ex-sx), h: Math.abs(ey-sy)
-    };
-    render();
-  } else if(state.dragging && state.selected !== null){
-    const r = getRooms()[state.selected];
-    r.x = snap(pos.x - state.dragOffset.x);
-    r.y = snap(pos.y - state.dragOffset.y);
-    render();
-  } else if(state.panning && state.panStart){
-    state.pan.x = pos.rawX - state.panStart.x + state.pan.x - (pos.rawX - state.panStart.x - (pos.rawX - state.panStart.x));
-    state.pan.x = pos.rawX - state.panStart.x;
-    state.pan.y = pos.rawY - state.panStart.y;
+function pointerMove(cx,cy){
+  const w=toWorld(cx,cy);
+  if(tool==='pan'&&panStart){view.x=panStart.vx+(cx-panStart.cx);view.y=panStart.vy+(cy-panStart.cy);render();return;}
+  if(drawing&&drawRect){const sx=drawRect.x,sy=drawRect.y,ex=snapW(w.x),ey=snapW(w.y);drawRect={x:Math.min(sx,ex),y:Math.min(sy,ey),w:Math.abs(ex-sx),h:Math.abs(ey-sy)};render();return;}
+  if(dragging&&selected){
+    if(selected.type==='room'){const r=getRooms()[selected.idx];r.x=snapW(w.x-dragOff.x);r.y=snapW(w.y-dragOff.y);}
+    else{const el=getElems()[selected.idx];el.x=snapW(w.x-dragOff.x);el.y=snapW(w.y-dragOff.y);}
     render();
   }
 }
-
-function onUp(e){
-  if(state.drawing && state.drawRect && state.drawRect.w > 10 && state.drawRect.h > 10){
-    const type = 'living';
-    const idx = getRooms().length % TYPE_COLORS.length;
+function pointerUp(){
+  if(drawing&&drawRect&&drawRect.w>GRID&&drawRect.h>GRID){
     pushHistory();
-    getRooms().push({
-      x: state.drawRect.x, y: state.drawRect.y,
-      w: state.drawRect.w, h: state.drawRect.h,
-      name: 'Room '+(getRooms().length+1),
-      fill: TYPE_COLORS[idx], stroke: TYPE_STROKES[idx],
-      notes:'', hvac:'', insul:'', type:'other'
-    });
-    state.selected = getRooms().length-1;
-    updateSidePanel(); updateRoomList();
+    const idx=getRooms().length%SWATCH_FILLS.length;
+    getRooms().push({x:drawRect.x,y:drawRect.y,w:drawRect.w,h:drawRect.h,
+      name:'Room '+(getRooms().length+1),fill:SWATCH_FILLS[idx],stroke:'#4B3728',notes:'',hvac:'',insul:'',type:'other'});
+    selected={type:'room',idx:getRooms().length-1};
+    updatePanel();updateRoomList();openMobPropsIfSelected();
   }
-  state.drawing = false; state.drawRect = null; state.drawStart = null;
-  state.dragging = false; state.dragOffset = null;
-  state.panning = false; state.panStart = null;
+  drawing=false;drawRect=null;dragging=false;
+  if(tool==='pan'){panStart=null;canvas.className='cur-pan';}
   render();
 }
 
-document.addEventListener('keydown', e=>{
-  if(e.key==='Delete'||e.key==='Backspace'){
-    if(state.selected!==null && document.activeElement===document.body){ deleteSelected(); }
+function onDown(e){const{cx,cy}=getCanvasOffset(e);pointerDown(cx,cy);}
+function onMove(e){const{cx,cy}=getCanvasOffset(e);pointerMove(cx,cy);}
+function onUp(e){pointerUp();}
+
+// Touch pinch zoom
+function handleTouchStart(e){
+  if(e.touches.length===1){const t=e.touches[0];const r=canvas.getBoundingClientRect();pointerDown(t.clientX-r.left,t.clientY-r.top);}
+  else if(e.touches.length===2){lastTouches=e.touches;}
+}
+function handleTouchMove(e){
+  if(e.touches.length===1){const t=e.touches[0];const r=canvas.getBoundingClientRect();pointerMove(t.clientX-r.left,t.clientY-r.top);}
+  else if(e.touches.length===2&&lastTouches){
+    const t1=e.touches[0],t2=e.touches[1],p1=lastTouches[0],p2=lastTouches[1];
+    const d1=Math.hypot(p1.clientX-p2.clientX,p1.clientY-p2.clientY);
+    const d2=Math.hypot(t1.clientX-t2.clientX,t1.clientY-t2.clientY);
+    const factor=d2/d1;
+    const mx=(t1.clientX+t2.clientX)/2,my=(t1.clientY+t2.clientY)/2;
+    const r=canvas.getBoundingClientRect();
+    const cx=mx-r.left,cy=my-r.top;
+    const wx=(cx-view.x)/view.scale,wy=(cy-view.y)/view.scale;
+    view.scale=Math.max(0.25,Math.min(5,view.scale*factor));
+    view.x=cx-wx*view.scale;view.y=cy-wy*view.scale;
+    lastTouches=e.touches;render();
   }
-  if(e.key==='Escape'){ state.selected=null; updateSidePanel(); render(); }
-});
+}
+function handleTouchEnd(e){lastTouches=null;pointerUp();}
+function onWheel(e){e.preventDefault();const r=canvas.getBoundingClientRect();const cx=e.clientX-r.left,cy=e.clientY-r.top;const f=e.deltaY<0?1.1:0.9;const wx=(cx-view.x)/view.scale,wy=(cy-view.y)/view.scale;view.scale=Math.max(0.25,Math.min(5,view.scale*f));view.x=cx-wx*view.scale;view.y=cy-wy*view.scale;render();}
+document.addEventListener('keydown',e=>{if((e.key==='Delete'||e.key==='Backspace')&&document.activeElement===document.body)deleteSelected();if(e.key==='Escape'){selected=null;closeMobProps();updatePanel();render();}});
+
+// ── TOOLS ──────────────────────────────────────────────────────────
+function setTool(t){
+  tool=t;selected=null;closeMobProps();
+  document.querySelectorAll('.lb-btn[id^=tb-]').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.mob-tool-btn[id^=mtb-]').forEach(b=>b.classList.remove('active'));
+  const db=document.getElementById('tb-'+t);if(db)db.classList.add('active');
+  const mb=document.getElementById('mtb-'+t);if(mb)mb.classList.add('active');
+  canvas.className='fp-canvas cur-'+(t==='pan'?'pan':t==='room'?'draw':'select');
+  updatePanel();render();
+}
+
+function addElement(type,closeDrawer=true){
+  const def=ELEM_DEFS[type];if(!def)return;
+  pushHistory();
+  const cx=toWorld(canvas.width/2,canvas.height/2);
+  getElems().push({type,x:snapW(cx.x-def.w/2),y:snapW(cx.y-def.h/2),w:def.w,h:def.h,label:def.label,rot:0,notes:''});
+  selected={type:'elem',idx:getElems().length-1};
+  if(closeDrawer)closeMobDrawer();
+  updatePanel();openMobPropsIfSelected();render();
+  toast(def.label+' added');
+}
+
+function addCustomText(closeDrawer=true){
+  const txt=prompt('Enter text:');if(!txt||!txt.trim())return;
+  pushHistory();
+  const cx=toWorld(canvas.width/2,canvas.height/2);
+  getElems().push({type:'customtext',x:snapW(cx.x-40),y:snapW(cx.y-12),
+    w:Math.max(80,txt.length*8),h:24,label:'',customText:txt,fontSize:13,textBold:false,textColor:'#1C1209',rot:0,notes:''});
+  selected={type:'elem',idx:getElems().length-1};
+  if(closeDrawer)closeMobDrawer();
+  updatePanel();openMobPropsIfSelected();render();toast('Text added');
+}
 
 function deleteSelected(){
-  if(state.selected===null) return;
+  if(!selected)return;
   pushHistory();
-  getRooms().splice(state.selected,1);
-  state.selected=null;
-  updateSidePanel(); updateRoomList(); render();
+  if(selected.type==='room')getRooms().splice(selected.idx,1);
+  else getElems().splice(selected.idx,1);
+  selected=null;closeMobProps();updatePanel();updateRoomList();render();
 }
+function pushHistory(){history.push(JSON.stringify(floors));if(history.length>25)history.shift();}
+function undo(){if(!history.length){toast('Nothing to undo');return;}floors=JSON.parse(history.pop());selected=null;closeMobProps();updatePanel();updateRoomList();render();toast('Undone');}
 
-function pushHistory(){
-  state.history.push(JSON.stringify(state.floors));
-  if(state.history.length>20) state.history.shift();
-}
-
-function undoLast(){
-  if(!state.history.length){ showToast('Nothing to undo'); return; }
-  state.floors = JSON.parse(state.history.pop());
-  state.selected=null;
-  updateSidePanel(); updateRoomList(); render();
-  showToast('Undone');
-}
-
-function clearAll(){
-  if(!confirm('Clear all rooms on this floor?')) return;
-  pushHistory();
-  state.floors[state.currentFloor].rooms = [];
-  state.selected=null;
-  updateSidePanel(); updateRoomList(); render();
-}
-
-function updateSidePanel(){
-  const noSel = document.getElementById('no-selection');
-  const selPanel = document.getElementById('selection-panel');
-  if(state.selected===null || !getRooms()[state.selected]){
-    noSel.style.display='';
-    selPanel.style.display='none';
-    return;
+// ── DESKTOP PANEL ──────────────────────────────────────────────────
+function updatePanel(){
+  document.getElementById('rp-empty').style.display='none';
+  document.getElementById('rp-room').style.display='none';
+  document.getElementById('rp-elem').style.display='none';
+  if(!selected){document.getElementById('rp-empty').style.display='';updateRoomList();return;}
+  if(selected.type==='room'){
+    const r=getRooms()[selected.idx];if(!r){selected=null;updatePanel();return;}
+    document.getElementById('rp-room').style.display='';
+    document.getElementById('rp-name').value=r.name||'';
+    document.getElementById('rp-w').value=Math.round(r.w/GRID);
+    document.getElementById('rp-h').value=Math.round(r.h/GRID);
+    document.getElementById('rp-sqft').value=(Math.round(r.w/GRID)*Math.round(r.h/GRID))+' sq ft';
+    document.getElementById('rp-notes').value=r.notes||'';
+    document.getElementById('rp-hvac').value=r.hvac||'';
+    document.getElementById('rp-insul').value=r.insul||'';
+    buildSwatches(r.fill);
+  } else {
+    const el=getElems()[selected.idx];if(!el){selected=null;updatePanel();return;}
+    document.getElementById('rp-elem').style.display='';
+    document.getElementById('rp-elabel').value=el.label||'';
+    document.getElementById('rp-rot').value=el.rot||0;
+    document.getElementById('rp-enotes').value=el.notes||'';
+    const isText=el.type==='customtext',isArrow=el.type==='arrow';
+    document.getElementById('rp-textprops').style.display=isText?'':'none';
+    document.getElementById('rp-arrowprops').style.display=isArrow?'':'none';
+    if(isText){document.getElementById('rp-customtext').value=el.customText||'';document.getElementById('rp-fontsize').value=el.fontSize||13;document.getElementById('rp-textcolor').value=el.textColor||'#1C1209';document.getElementById('rp-bold').checked=el.textBold||false;}
+    if(isArrow){document.getElementById('rp-arrowlabel').value=el.arrowLabel||'';document.getElementById('rp-arrowcolor').value=el.arrowColor||'#374151';}
   }
-  noSel.style.display='none';
-  selPanel.style.display='';
-  const r = getRooms()[state.selected];
-  document.getElementById('prop-name').value = r.name||'';
-  document.getElementById('prop-w').value = Math.round(r.w/state.scale)||'';
-  document.getElementById('prop-h').value = Math.round(r.h/state.scale)||'';
-  document.getElementById('prop-sqft').value = (Math.round(r.w/state.scale)*Math.round(r.h/state.scale))+' sq ft';
-  document.getElementById('prop-notes').value = r.notes||'';
-  document.getElementById('prop-hvac').value = r.hvac||'';
-  document.getElementById('prop-insul').value = r.insul||'';
-  buildColorRow(r.fill);
+  updateRoomList();
 }
 
-function buildColorRow(current){
-  const row = document.getElementById('colorRow');
-  row.innerHTML='';
-  TYPE_COLORS.forEach((c,i)=>{
-    const s = document.createElement('div');
-    s.className='color-swatch'+(c===current?' active':'');
-    s.style.background=c;
-    s.style.border='2px solid '+TYPE_STROKES[i];
-    s.onclick=()=>{
-      if(state.selected===null) return;
-      getRooms()[state.selected].fill=c;
-      getRooms()[state.selected].stroke=TYPE_STROKES[i];
-      buildColorRow(c); render(); updateRoomList();
-    };
+function buildSwatches(current){
+  const row=document.getElementById('colorSwatches');row.innerHTML='';
+  SWATCH_FILLS.forEach((f,i)=>{
+    const s=document.createElement('div');s.className='cswatch'+(f===current?' sel':'');
+    s.style.background=f;s.style.border='2px solid '+SWATCH_STROKES[i];
+    s.onclick=()=>{if(!selected||selected.type!=='room')return;getRooms()[selected.idx].fill=f;buildSwatches(f);render();updateRoomList();};
     row.appendChild(s);
   });
 }
 
-function updateSelectedProp(key, val){
-  if(state.selected===null) return;
-  getRooms()[state.selected][key]=val;
-  updateRoomList(); render();
+function updateProp(key,val){
+  if(!selected)return;
+  if(selected.type==='room')getRooms()[selected.idx][key]=val;
+  else getElems()[selected.idx][key]=val;
+  updateRoomList();render();
 }
-
-function updateSelectedDim(dim, val){
-  if(state.selected===null) return;
-  const px = parseInt(val)*state.scale;
-  if(!px||px<state.scale) return;
-  if(dim==='w') getRooms()[state.selected].w=px;
-  if(dim==='h') getRooms()[state.selected].h=px;
-  const r=getRooms()[state.selected];
-  document.getElementById('prop-sqft').value=(Math.round(r.w/state.scale)*Math.round(r.h/state.scale))+' sq ft';
-  updateRoomList(); render();
+function updateElemLabel(val){if(!selected||selected.type!=='elem')return;getElems()[selected.idx].label=val;render();}
+function updateCustomTextVal(val){
+  if(!selected||selected.type!=='elem')return;
+  const el=getElems()[selected.idx];el.customText=val;el.w=Math.max(60,val.length*(el.fontSize||13)*0.65);render();
+}
+function updateDim(dim,val){
+  if(!selected||selected.type!=='room')return;
+  const px=parseInt(val)*GRID;if(!px||px<GRID)return;
+  const r=getRooms()[selected.idx];
+  if(dim==='w')r.w=px;else r.h=px;
+  document.getElementById('rp-sqft').value=(Math.round(r.w/GRID)*Math.round(r.h/GRID))+' sq ft';
+  render();updateRoomList();
 }
 
 function updateRoomList(){
-  const list = document.getElementById('roomList');
-  const noRooms = document.getElementById('no-rooms');
-  const rooms = getRooms();
-  list.innerHTML='';
-  noRooms.style.display = rooms.length?'none':'';
-  let total=0;
+  const list=document.getElementById('roomList');
+  const rooms=getRooms();list.innerHTML='';let total=0;
   rooms.forEach((r,i)=>{
-    const wft=Math.round(r.w/state.scale), hft=Math.round(r.h/state.scale);
-    const sq=wft*hft; total+=sq;
+    const wft=Math.round(r.w/GRID),hft=Math.round(r.h/GRID),sq=wft*hft;total+=sq;
     const el=document.createElement('div');
-    el.className='room-item'+(state.selected===i?' selected':'');
-    el.innerHTML=`<div class="room-color-dot" style="background:${r.fill};border:1.5px solid ${r.stroke}"></div>
-      <div class="room-info"><div class="room-name">${r.name||'Room '+(i+1)}</div><div class="room-size">${wft}x${hft}ft &middot; ${sq} sq ft</div></div>
-      <button class="room-del" onclick="event.stopPropagation();state.selected=${i};deleteSelected()">&#x2715;</button>`;
-    el.onclick=()=>{ state.selected=i; updateSidePanel(); updateRoomList(); render(); };
+    el.className='room-item'+(selected&&selected.type==='room'&&selected.idx===i?' sel':'');
+    el.innerHTML=`<div class="room-dot" style="background:${r.fill};border:1.5px solid #4B3728"></div>
+      <div class="room-name-txt">${r.name||'Room '+(i+1)}</div>
+      <span class="room-sqft">${sq}sf</span>
+      <button class="room-del" onclick="event.stopPropagation();selected={type:'room',idx:${i}};deleteSelected()">×</button>`;
+    el.onclick=()=>{selected={type:'room',idx:i};updatePanel();openMobPropsIfSelected();render();};
     list.appendChild(el);
   });
-  document.getElementById('totalSqft').textContent=total+' sq ft';
+  document.getElementById('totalArea').textContent=total+' sqft';
 }
 
-function openRoomModal(){ document.getElementById('roomModal').classList.add('open'); document.getElementById('m-name').focus(); }
-function closeRoomModal(){ document.getElementById('roomModal').classList.remove('open'); }
+// ── MOBILE DRAWER ──────────────────────────────────────────────────
+function openMobDrawer(cat){
+  const data=MOB_CATEGORIES[cat];if(!data)return;
+  document.getElementById('mobDrawerTitle').textContent=data.title;
+  const body=document.getElementById('mobDrawerBody');
+  body.innerHTML=`<div class="mob-elem-grid">${data.items.map(item=>`
+    <button class="mob-elem-btn" onclick="${item.type==='customtext'?'addCustomText()':item.type==='arrow'?'addElement(\'arrow\')':'addElement(\''+item.type+'\')'}">
+      <div class="mob-elem-icon">${item.icon}</div>
+      <span>${item.label}</span>
+    </button>`).join('')}</div>`;
+  document.getElementById('mobDrawerBg').classList.add('open');
+  document.getElementById('mobDrawer').classList.add('open');
+}
+function closeMobDrawer(){
+  document.getElementById('mobDrawerBg').classList.remove('open');
+  document.getElementById('mobDrawer').classList.remove('open');
+}
 
-function addRoomFromModal(){
-  const name=document.getElementById('m-name').value||'New Room';
-  const w=parseInt(document.getElementById('m-w').value)||12;
-  const h=parseInt(document.getElementById('m-h').value)||10;
-  const type=document.getElementById('m-type').value;
-  const fill=COLORS[type]||TYPE_COLORS[0];
-  const stroke=STROKES[type]||TYPE_STROKES[0];
+// ── MOBILE PROPERTIES SHEET ─────────────────────────────────────────
+function openMobPropsIfSelected(){
+  if(!selected)return;
+  if(window.innerWidth>700)return;
+  buildMobProps();
+  document.getElementById('mobPropsSheet').classList.add('open');
+}
+function closeMobProps(){document.getElementById('mobPropsSheet').classList.remove('open');}
+
+function buildMobProps(){
+  if(!selected)return;
+  const body=document.getElementById('mobPsBody');
+  if(selected.type==='room'){
+    const r=getRooms()[selected.idx];if(!r)return;
+    document.getElementById('mobPsTitle').textContent=r.name||'Room';
+    body.innerHTML=`
+      <div class="mob-ps-section">
+        <label class="mob-ps-label">Room Name</label>
+        <input class="mob-input" value="${r.name||''}" oninput="updateProp('name',this.value);document.getElementById('mobPsTitle').textContent=this.value||'Room';updateRoomList()" placeholder="Room name"/>
+      </div>
+      <div class="mob-ps-section">
+        <label class="mob-ps-label">Dimensions</label>
+        <div class="mob-input-grid">
+          <div><label class="mob-ps-label" style="font-size:.6rem">Width (ft)</label><input class="mob-input" type="number" value="${Math.round(r.w/GRID)}" min="1" oninput="updateDim('w',this.value)"/></div>
+          <div><label class="mob-ps-label" style="font-size:.6rem">Length (ft)</label><input class="mob-input" type="number" value="${Math.round(r.h/GRID)}" min="1" oninput="updateDim('h',this.value)"/></div>
+        </div>
+        <div style="margin-top:8px;font-size:.8rem;font-weight:700;color:var(--brand)">${Math.round(r.w/GRID)*Math.round(r.h/GRID)} sq ft</div>
+      </div>
+      <div class="mob-ps-section">
+        <label class="mob-ps-label">Color</label>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:4px">
+          ${SWATCH_FILLS.map((f,i)=>`<div onclick="updateProp('fill','${f}');buildMobProps();render()" style="width:32px;height:32px;border-radius:8px;background:${f};border:${f===r.fill?'3px solid #6B2D0F':'2px solid '+SWATCH_STROKES[i]};cursor:pointer;transform:${f===r.fill?'scale(1.2)':'scale(1)'}"></div>`).join('')}
+        </div>
+      </div>
+      <div class="mob-ps-section">
+        <label class="mob-ps-label">HVAC System</label>
+        <select class="mob-input" onchange="updateProp('hvac',this.value)">
+          ${['','Forced Air','Heat Pump','Mini Split','Baseboard','Radiant','None'].map(v=>`<option value="${v}"${r.hvac===v?' selected':''}>${v||'Unknown'}</option>`).join('')}
+        </select>
+      </div>
+      <div class="mob-ps-section">
+        <label class="mob-ps-label">Insulation</label>
+        <select class="mob-input" onchange="updateProp('insul',this.value)">
+          ${['','None','R-11','R-19','R-30','R-38','Spray Foam'].map(v=>`<option value="${v}"${r.insul===v?' selected':''}>${v||'Unknown'}</option>`).join('')}
+        </select>
+      </div>
+      <div class="mob-ps-section">
+        <label class="mob-ps-label">Field Notes</label>
+        <textarea class="mob-input" rows="4" placeholder="HVAC access, insulation condition, issues found..." style="resize:vertical" oninput="updateProp('notes',this.value)">${r.notes||''}</textarea>
+      </div>`;
+  } else {
+    const el=getElems()[selected.idx];if(!el)return;
+    document.getElementById('mobPsTitle').textContent=el.label||el.type||'Element';
+    const isText=el.type==='customtext',isArrow=el.type==='arrow';
+    body.innerHTML=`
+      <div class="mob-ps-section">
+        <label class="mob-ps-label">Label</label>
+        <input class="mob-input" value="${el.label||''}" oninput="updateElemLabel(this.value)" placeholder="Label below symbol"/>
+      </div>
+      <div class="mob-ps-section">
+        <label class="mob-ps-label">Rotate</label>
+        <select class="mob-input" onchange="updateProp('rot',parseInt(this.value));render()">
+          ${[0,90,180,270].map(v=>`<option value="${v}"${(el.rot||0)===v?' selected':''}>${v}°</option>`).join('')}
+        </select>
+      </div>
+      ${isText?`<div class="mob-ps-section">
+        <label class="mob-ps-label">Text Content</label>
+        <input class="mob-input" value="${el.customText||''}" oninput="updateCustomTextVal(this.value)" placeholder="Your text..."/>
+        <div style="display:flex;gap:10px;margin-top:8px;align-items:center">
+          <label class="mob-ps-label">Size</label>
+          <input type="number" class="mob-input" value="${el.fontSize||13}" min="8" max="36" style="width:70px" oninput="updateProp('fontSize',parseInt(this.value));render()"/>
+          <input type="checkbox" ${el.textBold?'checked':''} onchange="updateProp('textBold',this.checked);render()" style="width:20px;height:20px;accent-color:var(--brand)"/>
+          <label class="mob-ps-label">Bold</label>
+        </div>
+      </div>`:''}
+      ${isArrow?`<div class="mob-ps-section">
+        <label class="mob-ps-label">Arrow Label</label>
+        <input class="mob-input" value="${el.arrowLabel||''}" oninput="updateProp('arrowLabel',this.value);render()" placeholder="Label..."/>
+      </div>`:''}
+      <div class="mob-ps-section">
+        <label class="mob-ps-label">Field Notes</label>
+        <textarea class="mob-input" rows="3" placeholder="Notes about this element..." style="resize:vertical" oninput="updateProp('notes',this.value)">${el.notes||''}</textarea>
+      </div>`;
+  }
+}
+
+// ── MODAL ──────────────────────────────────────────────────────────
+function openAddRoom(){document.getElementById('addRoomOverlay').classList.add('open');document.getElementById('m-rname').focus();}
+function closeAddRoom(){document.getElementById('addRoomOverlay').classList.remove('open');}
+document.getElementById('addRoomOverlay').addEventListener('click',e=>{if(e.target===document.getElementById('addRoomOverlay'))closeAddRoom();});
+function confirmAddRoom(){
+  const name=document.getElementById('m-rname').value||'New Room';
+  const w=parseInt(document.getElementById('m-rw').value)||12;
+  const h=parseInt(document.getElementById('m-rl').value)||10;
+  const type=document.getElementById('m-rtype').value;
+  const fill=FILLS[type]||SWATCH_FILLS[0];
   pushHistory();
-  const rooms=getRooms();
-  const px=40+rooms.length*20, py=40+rooms.length*20;
-  rooms.push({x:px, y:py, w:w*state.scale, h:h*state.scale, name, fill, stroke, type, notes:'', hvac:'', insul:''});
-  state.selected=rooms.length-1;
-  closeRoomModal(); updateSidePanel(); updateRoomList(); render();
-  showToast(name+' added');
+  const rooms=getRooms(),off=rooms.length*GRID;
+  rooms.push({x:2*GRID+off%120,y:2*GRID+Math.floor(off/120)*GRID,w:w*GRID,h:h*GRID,name,fill,stroke:'#4B3728',type,notes:'',hvac:'',insul:''});
+  selected={type:'room',idx:rooms.length-1};
+  closeAddRoom();updatePanel();updateRoomList();openMobPropsIfSelected();render();toast(name+' added');
 }
 
-function exportPDF(){
-  const proj = document.getElementById('proj-name').value || 'Floor Plan';
-  showToast('Preparing export...');
-  const tempCanvas = document.createElement('canvas');
-  const rooms = getRooms();
-  if(!rooms.length){ showToast('No rooms to export'); return; }
-  const margin=60;
-  const minX=Math.min(...rooms.map(r=>r.x))-margin;
-  const minY=Math.min(...rooms.map(r=>r.y))-margin;
-  const maxX=Math.max(...rooms.map(r=>r.x+r.w))+margin;
-  const maxY=Math.max(...rooms.map(r=>r.y+r.h))+margin;
-  tempCanvas.width=Math.max(800,maxX-minX);
-  tempCanvas.height=Math.max(600,maxY-minY)+100;
-  const tc=tempCanvas.getContext('2d');
-  tc.fillStyle='#FFF'; tc.fillRect(0,0,tempCanvas.width,tempCanvas.height);
-  tc.fillStyle='#6B2D0F'; tc.font='700 18px DM Sans, sans-serif'; tc.textAlign='left';
-  tc.fillText(proj+' - Floor Plan', 20, 30);
-  tc.fillStyle='#9C7B6B'; tc.font='500 12px DM Sans, sans-serif';
-  tc.fillText('Generated by Latino Built Floor Plan Tool - '+new Date().toLocaleDateString(), 20, 50);
-  tc.fillStyle='#E8DDD4'; tc.fillRect(0,60,tempCanvas.width,1);
-  const offX=-minX, offY=-minY+70;
-  rooms.forEach(r=>{
-    tc.fillStyle=r.fill; tc.strokeStyle=r.stroke; tc.lineWidth=2;
-    tc.beginPath(); tc.roundRect(r.x+offX,r.y+offY,r.w,r.h,6); tc.fill(); tc.stroke();
-    const wft=Math.round(r.w/state.scale), hft=Math.round(r.h/state.scale);
-    tc.fillStyle='#1C1209'; tc.font='700 12px DM Sans, sans-serif'; tc.textAlign='center';
-    tc.fillText(r.name||'Room', r.x+offX+r.w/2, r.y+offY+r.h/2-6);
-    tc.font='500 10px DM Sans, sans-serif'; tc.fillStyle='#5C4033';
-    tc.fillText(`${wft}x${hft}ft (${wft*hft} sqft)`, r.x+offX+r.w/2, r.y+offY+r.h/2+10);
-    if(r.hvac){ tc.font='500 9px DM Sans, sans-serif'; tc.fillStyle='#9C7B6B'; tc.fillText('HVAC: '+r.hvac, r.x+offX+r.w/2, r.y+offY+r.h/2+22); }
+// ── EXPORT ─────────────────────────────────────────────────────────
+function doExport(){
+  const proj=document.getElementById('proj-input').value||'Floor Plan';
+  const all=[...getRooms(),...getElems()];
+  if(!all.length){toast('Nothing to export');return;}
+  const pad=60,minX=Math.min(...all.map(r=>r.x))-pad,minY=Math.min(...all.map(r=>r.y))-pad;
+  const maxX=Math.max(...all.map(r=>r.x+r.w))+pad,maxY=Math.max(...all.map(r=>r.y+r.h))+pad;
+  const tw=Math.max(800,maxX-minX),th=Math.max(600,maxY-minY)+80;
+  const tc=document.createElement('canvas');tc.width=tw;tc.height=th;
+  const tx=tc.getContext('2d');
+  tx.fillStyle='#fff';tx.fillRect(0,0,tw,th);
+  tx.fillStyle='#6B2D0F';tx.font='bold 16px DM Sans,sans-serif';tx.textAlign='left';tx.fillText(proj+' - Floor Plan',14,26);
+  tx.fillStyle='#9C7B6B';tx.font='500 11px DM Sans,sans-serif';tx.fillText('Latino Built · '+new Date().toLocaleDateString(),14,44);
+  tx.strokeStyle='#E8DDD4';tx.lineWidth=1;tx.beginPath();tx.moveTo(0,56);tx.lineTo(tw,56);tx.stroke();
+  const ox=-minX,oy=-minY+64;
+  getRooms().forEach(r=>{
+    tx.fillStyle=r.fill||'#FFFBEB';tx.fillRect(r.x+ox,r.y+oy,r.w,r.h);
+    tx.strokeStyle='#3D2510';tx.lineWidth=4;tx.strokeRect(r.x+ox+2,r.y+oy+2,r.w-4,r.h-4);
+    const wft=Math.round(r.w/GRID),hft=Math.round(r.h/GRID);
+    tx.fillStyle='#2D1A0A';tx.font='bold 12px DM Sans,sans-serif';tx.textAlign='center';tx.textBaseline='middle';
+    tx.fillText(r.name||'Room',r.x+ox+r.w/2,r.y+oy+r.h/2-8);
+    tx.font='500 10px DM Sans,sans-serif';tx.fillStyle='#7B5040';
+    tx.fillText(`${wft}x${hft}ft · ${wft*hft}sqft`,r.x+ox+r.w/2,r.y+oy+r.h/2+8);
+    if(r.notes){tx.font='italic 9px DM Sans,sans-serif';tx.fillStyle='#9C7B6B';tx.fillText(r.notes.substring(0,40),r.x+ox+r.w/2,r.y+oy+r.h/2+22);}
+  });
+  getElems().forEach(e=>{
+    tx.fillStyle='#F1F5F9';tx.strokeStyle='#374151';tx.lineWidth=1.5;
+    tx.fillRect(e.x+ox,e.y+oy,e.w,e.h);tx.strokeRect(e.x+ox,e.y+oy,e.w,e.h);
+    tx.fillStyle='#374151';tx.font='bold 9px DM Sans,sans-serif';tx.textAlign='center';tx.textBaseline='middle';
+    if(e.type==='customtext'&&e.customText){tx.fillStyle=e.textColor||'#1C1209';tx.font=`${e.textBold?'bold ':''}${e.fontSize||13}px DM Sans,sans-serif`;tx.textAlign='left';tx.textBaseline='top';tx.fillText(e.customText,e.x+ox+2,e.y+oy+2);}
+    else{tx.fillText(e.label||e.type,e.x+ox+e.w/2,e.y+oy+e.h/2);}
   });
   const link=document.createElement('a');
   link.download=proj.replace(/\s+/g,'_')+'_floor_plan.png';
-  link.href=tempCanvas.toDataURL('image/png');
-  link.click();
-  showToast('Floor plan downloaded!');
+  link.href=tc.toDataURL('image/png');link.click();toast('Exported!');
 }
 
-function showToast(msg){
-  const t=document.getElementById('toast');
-  t.textContent=msg; t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'),2500);
-}
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
 
-document.getElementById('roomModal').addEventListener('click',e=>{
-  if(e.target===document.getElementById('roomModal')) closeRoomModal();
-});
-
-render();
+// ── INIT ───────────────────────────────────────────────────────────
+resize();resetView();updateRoomList();
 </script>
 </body>
 </html>
