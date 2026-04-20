@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Floor Plan Tool - Latino Built</title>
+<title>Floor Plan Tool</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -221,6 +221,25 @@ kbd{background:var(--surface2);border:1px solid var(--border-dark);border-radius
   .mob-props-sheet{display:none !important}
   .mob-tool-row{display:none !important}
 }
+
+/* ── ROTATE NUDGE (portrait phone only) ── */
+#rotate-nudge{
+  display:none;
+  position:fixed;bottom:90px;left:50%;transform:translateX(-50%);
+  background:var(--brand);color:#fff;
+  padding:10px 16px;border-radius:99px;
+  font-size:.78rem;font-weight:700;
+  box-shadow:0 4px 16px rgba(107,45,15,.35);
+  z-index:400;white-space:nowrap;
+  align-items:center;gap:8px;
+  animation:nudgePop .4s cubic-bezier(.32,1,.6,1);
+}
+#rotate-nudge.visible{display:flex}
+#rotate-nudge-close{background:rgba(255,255,255,.25);border:none;color:#fff;
+  border-radius:99px;width:20px;height:20px;cursor:pointer;font-size:.75rem;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;padding:0}
+@keyframes nudgePop{from{opacity:0;transform:translateX(-50%) translateY(12px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+@media(orientation:landscape){#rotate-nudge{display:none !important}}
 </style>
 </head>
 <body>
@@ -523,6 +542,11 @@ kbd{background:var(--surface2);border:1px solid var(--border-dark);border-radius
       <button class="btn btn-primary btn-sm" onclick="confirmAddRoom()">Add Room</button>
     </div>
   </div>
+</div>
+
+<div id="rotate-nudge">
+  📱 Rotate your phone sideways for more space
+  <button id="rotate-nudge-close" onclick="dismissNudge()" title="Dismiss">✕</button>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -1103,6 +1127,23 @@ function doExport(){
 }
 
 function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
+
+// ── ROTATE NUDGE ───────────────────────────────────────────────────
+(function(){
+  const nudge=document.getElementById('rotate-nudge');
+  let dismissed=false;
+  function checkOrientation(){
+    if(dismissed)return;
+    const isMobile=window.innerWidth<=700||('ontouchstart' in window&&window.innerWidth<900);
+    const isPortrait=window.innerHeight>window.innerWidth;
+    if(isMobile&&isPortrait)nudge.classList.add('visible');
+    else nudge.classList.remove('visible');
+  }
+  window.dismissNudge=function(){dismissed=true;nudge.classList.remove('visible');}
+  window.addEventListener('orientationchange',()=>setTimeout(checkOrientation,300));
+  window.addEventListener('resize',checkOrientation);
+  setTimeout(checkOrientation,800);
+})();
 
 // ── INIT ───────────────────────────────────────────────────────────
 resize();resetView();updateRoomList();
