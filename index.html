@@ -20,7 +20,7 @@
   --safe-bottom: env(safe-area-inset-bottom, 0px);
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
-html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);font-size:14px}
+html,body{height:100%;height:100dvh;overflow:hidden;font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);font-size:14px}
 
 /* ── TOPBAR ── */
 .topbar{background:linear-gradient(135deg,var(--brand) 0%,var(--brand-mid) 60%,var(--brand-light) 100%);
@@ -46,7 +46,7 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
 .btn-icon{width:32px;height:32px;padding:0;justify-content:center}
 
 /* ── DESKTOP LAYOUT ── */
-.app-body{display:flex;height:calc(100vh - 52px)}
+.app-body{display:flex;height:calc(100vh - 52px);height:calc(100dvh - 52px)}
 
 /* LEFT SIDEBAR - desktop only */
 .left-bar{width:72px;background:var(--surface);border-right:1.5px solid var(--border);
@@ -110,7 +110,7 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
 
 /* ── MOBILE BOTTOM TAB BAR ── */
 .mob-tabbar{display:none;background:var(--surface);border-top:1.5px solid var(--border);
-  padding:6px 4px calc(6px + var(--safe-bottom));
+  padding:6px 4px calc(10px + var(--safe-bottom));
   flex-shrink:0;z-index:90;box-shadow:0 -2px 12px rgba(107,45,15,.1)}
 .mob-tabs{display:flex;gap:2px;justify-content:space-around}
 .mob-tab{flex:1;padding:6px 2px;border-radius:8px;border:none;background:transparent;
@@ -250,7 +250,7 @@ kbd{background:var(--surface2);border:1px solid var(--border-dark);border-radius
     <div class="topbar-icon">🏠</div>
     <div>
       <div class="topbar-title">Floor Plan Tool</div>
-      <div class="topbar-sub"></div>
+      <div class="topbar-sub">Home Energy Assessment</div>
     </div>
   </div>
   <div class="topbar-right">
@@ -1101,7 +1101,7 @@ function doExport(){
   const tx=tc.getContext('2d');
   tx.fillStyle='#fff';tx.fillRect(0,0,tw,th);
   tx.fillStyle='#6B2D0F';tx.font='bold 16px DM Sans,sans-serif';tx.textAlign='left';tx.fillText(proj+' - Floor Plan',14,26);
-  tx.fillStyle='#9C7B6B';tx.font='500 11px DM Sans,sans-serif';tx.fillText('Latino Built · '+new Date().toLocaleDateString(),14,44);
+  tx.fillStyle='#9C7B6B';tx.font='500 11px DM Sans,sans-serif';tx.fillText('Home Energy Assessment · '+new Date().toLocaleDateString(),14,44);
   tx.strokeStyle='#E8DDD4';tx.lineWidth=1;tx.beginPath();tx.moveTo(0,56);tx.lineTo(tw,56);tx.stroke();
   const ox=-minX,oy=-minY+64;
   getRooms().forEach(r=>{
@@ -1115,11 +1115,51 @@ function doExport(){
     if(r.notes){tx.font='italic 9px DM Sans,sans-serif';tx.fillStyle='#9C7B6B';tx.fillText(r.notes.substring(0,40),r.x+ox+r.w/2,r.y+oy+r.h/2+22);}
   });
   getElems().forEach(e=>{
-    tx.fillStyle='#F1F5F9';tx.strokeStyle='#374151';tx.lineWidth=1.5;
-    tx.fillRect(e.x+ox,e.y+oy,e.w,e.h);tx.strokeRect(e.x+ox,e.y+oy,e.w,e.h);
-    tx.fillStyle='#374151';tx.font='bold 9px DM Sans,sans-serif';tx.textAlign='center';tx.textBaseline='middle';
-    if(e.type==='customtext'&&e.customText){tx.fillStyle=e.textColor||'#1C1209';tx.font=`${e.textBold?'bold ':''}${e.fontSize||13}px DM Sans,sans-serif`;tx.textAlign='left';tx.textBaseline='top';tx.fillText(e.customText,e.x+ox+2,e.y+oy+2);}
-    else{tx.fillText(e.label||e.type,e.x+ox+e.w/2,e.y+oy+e.h/2);}
+    const ex=e.x+ox, ey=e.y+oy, ew=e.w, eh=e.h;
+    tx.save();
+    tx.translate(ex+ew/2, ey+eh/2);
+    tx.rotate((e.rot||0)*Math.PI/180);
+    tx.translate(-ew/2, -eh/2);
+    const t=e.type;
+    tx.strokeStyle='#374151'; tx.lineWidth=1.5;
+    function box(fill){tx.fillStyle=fill;tx.fillRect(0,0,ew,eh);tx.strokeRect(0,0,ew,eh);}
+    function lbl(txt2,color,size,cx2,cy2){tx.fillStyle=color;tx.font=`bold ${size}px Arial,sans-serif`;tx.textAlign='center';tx.textBaseline='middle';tx.fillText(txt2,cx2,cy2);}
+    function circle(fill,cx2,cy2,r){tx.beginPath();tx.arc(cx2,cy2,r,0,Math.PI*2);tx.fillStyle=fill;tx.fill();tx.stroke();}
+    if(t==='door'){tx.strokeStyle='#374151';tx.lineWidth=2;tx.strokeRect(0,0,ew,4);tx.beginPath();tx.arc(0,0,ew,0,Math.PI/2);tx.stroke();}
+    else if(t==='window'){box('#E0F2FE');tx.strokeStyle='#374151';[ew/3,2*ew/3].forEach(x=>{tx.beginPath();tx.moveTo(x,0);tx.lineTo(x,eh);tx.stroke();});tx.beginPath();tx.moveTo(0,eh/2);tx.lineTo(ew,eh/2);tx.stroke();}
+    else if(t==='stairs'){tx.strokeStyle='#374151';for(let i=0;i<5;i++)tx.strokeRect(i*ew/5,i*eh/5,ew-i*ew/5,eh-i*eh/5);}
+    else if(t==='smoke'){circle('#FEE2E2',ew/2,eh/2,ew*.46);circle('#DC2626',ew/2,eh/2,ew*.28);lbl('S','#fff',eh*.38,ew/2,eh/2);}
+    else if(t==='co'){circle('#FEF3C7',ew/2,eh/2,ew*.46);circle('#D97706',ew/2,eh/2,ew*.28);lbl('CO','#fff',eh*.28,ew/2,eh/2);}
+    else if(t==='cosmoke'){circle('#FFFBEB',ew/2,eh/2,ew*.46);circle('#6B2D0F',ew/2,eh/2,ew*.28);lbl('C+S','#fff',eh*.22,ew/2,eh/2);}
+    else if(t==='fireext'){box('#FEE2E2');tx.fillStyle='#DC2626';tx.fillRect(ew*.3,eh*.3,ew*.4,eh*.55);tx.fillRect(ew*.35,eh*.12,ew*.3,eh*.2);lbl('EXT','#fff',eh*.16,ew/2,eh*.6);}
+    else if(t==='furnace'){box('#FFF7ED');tx.strokeStyle='#C2410C';tx.strokeRect(4,4,ew-8,eh-8);lbl('FURN','#C2410C',eh*.22,ew/2,eh*.42);}
+    else if(t==='water'){box('#FFF7ED');circle('#FED7AA',ew/2,eh*.42,ew*.32);lbl('WH','#C2410C',eh*.22,ew/2,eh*.42);tx.fillStyle='#C2410C';tx.fillRect(ew*.35,eh*.72,ew*.3,eh*.18);}
+    else if(t==='hvac'){box('#ECFDF5');lbl('HVAC','#059669',eh*.28,ew/2,eh/2);}
+    else if(t==='heatpump'){box('#EFF6FF');lbl('HP','#2563EB',eh*.28,ew/2,eh/2);}
+    else if(t==='minisplit'){box('#EFF6FF');lbl('MINI SPLIT','#1D4ED8',eh*.35,ew/2,eh/2);}
+    else if(t==='outfan'){circle('#F0FDF4',ew/2,eh/2,ew*.46);lbl('FAN','#15803D',eh*.28,ew/2,eh/2);}
+    else if(t==='exhaust'){circle('#F3F4F6',ew/2,eh/2,ew*.46);lbl('EXH','#6B7280',eh*.28,ew/2,eh/2);}
+    else if(t==='vent'){box('#F9FAFB');lbl('VENT','#6B7280',eh*.4,ew/2,eh/2);}
+    else if(t==='ductwork'){box('#E5E7EB');lbl('DUCT','#6B7280',eh*.5,ew/2,eh/2);}
+    else if(t==='crawlentry'){box('#E5E7EB');tx.strokeStyle='#4B5563';tx.lineWidth=2;tx.strokeRect(3,3,ew-6,eh-6);tx.setLineDash([3,2]);tx.beginPath();tx.moveTo(3,3);tx.lineTo(ew-3,eh-3);tx.stroke();tx.beginPath();tx.moveTo(ew-3,3);tx.lineTo(3,eh-3);tx.stroke();tx.setLineDash([]);lbl('CRAWL','#4B5563',eh*.28,ew/2,eh/2);}
+    else if(t==='atticentry'){box('#FEF3C7');tx.strokeStyle='#D97706';tx.lineWidth=2;tx.strokeRect(3,3,ew-6,eh-6);tx.setLineDash([3,2]);tx.beginPath();tx.moveTo(3,3);tx.lineTo(ew-3,eh-3);tx.stroke();tx.beginPath();tx.moveTo(ew-3,3);tx.lineTo(3,eh-3);tx.stroke();tx.setLineDash([]);lbl('ATTIC','#D97706',eh*.28,ew/2,eh/2);}
+    else if(t==='electrical'){box('#FFFBEB');tx.strokeStyle='#D97706';tx.strokeRect(3,3,ew-8,eh-8);lbl('ELEC','#92400E',eh*.22,ew/2,eh*.42);lbl('PANEL','#92400E',eh*.22,ew/2,eh*.65);}
+    else if(t==='gasmeter'){circle('#DBEAFE',ew/2,eh/2,ew*.46);circle('#3B82F6',ew/2,eh/2,ew*.3);lbl('GAS','#fff',eh*.3,ew/2,eh/2);}
+    else if(t==='insul_wall'){box('#DBEAFE');lbl('WALL INS','#2563EB',eh*.45,ew/2,eh/2);}
+    else if(t==='insul_ceil'){box('#FEF3C7');lbl('CEIL INS','#D97706',eh*.45,ew/2,eh/2);}
+    else if(t==='insul_floor'){box('#DCFCE7');lbl('FLOOR INS','#16A34A',eh*.4,ew/2,eh/2);}
+    else if(t==='vapor'){box('#EFF6FF');lbl('VAPOR','#3B82F6',eh*.45,ew/2,eh/2);}
+    else if(t==='sofa'){box('#C4A882');lbl('SOFA','#5C3D1E',eh*.4,ew/2,eh/2);}
+    else if(t==='bed'){box('#DBEAFE');lbl('BED','#1D4ED8',eh*.4,ew/2,eh/2);}
+    else if(t==='toilet'){box('#F1F5F9');circle('#CBD5E1',ew/2,eh*.65,ew*.38);lbl('WC','#374151',eh*.28,ew/2,eh*.65);}
+    else if(t==='sink'){box('#E0F2FE');circle('#fff',ew/2,eh/2,ew*.35);lbl('SINK','#374151',eh*.3,ew/2,eh/2);}
+    else if(t==='stove'){box('#F1F5F9');lbl('STOVE','#374151',eh*.3,ew/2,eh/2);}
+    else if(t==='table'){box('#FEF3C7');lbl('TABLE','#92400E',eh*.35,ew/2,eh/2);}
+    else if(t==='washer'){box('#F8FAFC');circle('#BFDBFE',ew/2,eh/2,ew*.35);lbl('W/D','#374151',eh*.3,ew/2,eh/2);}
+    else if(t==='customtext'&&e.customText){tx.fillStyle=e.textColor||'#1C1209';tx.font=`${e.textBold?'bold ':''}${e.fontSize||13}px Arial,sans-serif`;tx.textAlign='left';tx.textBaseline='top';tx.fillText(e.customText,2,2);}
+    else if(t==='arrow'){tx.strokeStyle='#374151';tx.lineWidth=2.5;tx.beginPath();tx.moveTo(0,eh/2);tx.lineTo(ew-10,eh/2);tx.stroke();tx.fillStyle='#374151';tx.beginPath();tx.moveTo(ew,eh/2);tx.lineTo(ew-12,eh/2-6);tx.lineTo(ew-12,eh/2+6);tx.closePath();tx.fill();if(e.arrowLabel){lbl(e.arrowLabel,'#374151',10,ew/2,eh/2-10);}}
+    else{box('#F1F5F9');lbl(e.label||t,'#374151',Math.min(10,eh*.4),ew/2,eh/2);}
+    tx.restore();
   });
   const link=document.createElement('a');
   link.download=proj.replace(/\s+/g,'_')+'_floor_plan.png';
