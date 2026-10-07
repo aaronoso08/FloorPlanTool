@@ -1,6 +1,6 @@
 (()=>{
   const title=document.querySelector('.topbar-title');const sub=document.querySelector('.topbar-sub');const icon=document.querySelector('.topbar-icon');
-  if(title)title.textContent='Floor Plan Tool';if(sub)sub.textContent='Latino Built · Pro Source';if(icon){icon.textContent='LB';icon.setAttribute('aria-label','Latino Built');}
+  if(title)title.textContent='Floor Plan Tool';if(sub)sub.textContent='Independent prototype';if(icon){icon.textContent='';icon.setAttribute('aria-label','Tool');}
   const right=document.querySelector('.topbar-right');
   if(right&&!document.getElementById('lb-save-state')){const s=document.createElement('span');s.id='lb-save-state';s.className='lb-save-state';s.textContent='Saved on this device';right.prepend(s);}
   const search=document.getElementById('feature-search');
