@@ -241,7 +241,7 @@ kbd{background:var(--surface2);border:1px solid var(--border-dark);border-radius
 @keyframes nudgePop{from{opacity:0;transform:translateX(-50%) translateY(12px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
 @media(orientation:landscape){#rotate-nudge{display:none !important}}
 </style>
-<link rel="stylesheet" href="enhance.css?v=12"></head>
+<link rel="stylesheet" href="enhance.css?v=13"></head>
 <body>
 
 <!-- TOPBAR -->
@@ -341,6 +341,7 @@ kbd{background:var(--surface2);border:1px solid var(--border-dark);border-radius
       </button>
     </div>
     <canvas id="fp-canvas"></canvas>
+    <a class="plan-terms" href="./terms.html">Terms of Use<span>Verify measurements before use.</span></a>
     <div class="zoom-btns">
       <button class="zoom-btn" onclick="zoom(1.2)">+</button>
       <button class="zoom-btn" onclick="zoom(0.8)">-</button>
@@ -1044,7 +1045,7 @@ function doExport(){
   const tx=tc.getContext('2d');tx.scale(scale,scale);
   tx.fillStyle='#fff';tx.fillRect(0,0,tw,th);
   tx.fillStyle='#12211B';tx.font='bold 16px DM Sans,sans-serif';tx.textAlign='left';tx.fillText(proj+' - Floor Plan',14,26);
-  tx.fillStyle='#849087';tx.font='500 11px DM Sans,sans-serif';tx.fillText('Field sketch · '+new Date().toLocaleDateString(),14,44);
+  tx.fillStyle='#849087';tx.font='500 11px DM Sans,sans-serif';tx.fillText('Reference sketch · '+new Date().toLocaleDateString()+' · Verify measurements; not a construction or permit document.',14,44);
   tx.strokeStyle='#DEE5DF';tx.lineWidth=1;tx.beginPath();tx.moveTo(0,56);tx.lineTo(tw,56);tx.stroke();
   const ox=-minX,oy=-minY+64;
   getRooms().forEach(r=>{
