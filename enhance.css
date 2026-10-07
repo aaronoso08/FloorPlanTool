@@ -43,3 +43,5 @@ body{background:radial-gradient(circle at 90% -10%,rgba(255,122,26,.10),transpar
 
 /* Neutral identity for independent review. */
 .topbar-icon,.mark{display:none!important}
+
+.plan-terms{position:absolute;bottom:14px;left:14px;z-index:10;display:flex;flex-direction:column;justify-content:center;min-height:46px;padding:8px 12px;border:1px solid var(--border);border-radius:12px;background:white;color:var(--brand);font-size:12px;text-underline-offset:3px}.plan-terms span{font-size:10px;text-decoration:none;color:var(--text2)}@media(max-width:700px){.plan-terms{bottom:80px;left:10px}.plan-terms span{display:none}}
