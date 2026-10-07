@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Floor Plan Tool</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -380,8 +380,8 @@ kbd{background:var(--surface2);border:1px solid var(--border-dark);border-radius
           <div class="rp-title">Room</div>
           <div class="rp-row"><div class="rp-label">Name</div><input class="rp-input" id="rp-name" oninput="updateProp('name',this.value)" placeholder="Room name"/></div>
           <div class="rp-grid2">
-            <div class="rp-row"><div class="rp-label">W (ft)</div><input class="rp-input" id="rp-w" type="number" min="1" oninput="updateDim('w',this.value)"/></div>
-            <div class="rp-row"><div class="rp-label">L (ft)</div><input class="rp-input" id="rp-h" type="number" min="1" oninput="updateDim('h',this.value)"/></div>
+            <div class="rp-row"><div class="rp-label">W (ft)</div><input class="rp-input" id="rp-w" type="number" min="0.1" max="1000" step="0.1" oninput="updateDim('w',this.value)"/></div>
+            <div class="rp-row"><div class="rp-label">L (ft)</div><input class="rp-input" id="rp-h" type="number" min="0.1" max="1000" step="0.1" oninput="updateDim('h',this.value)"/></div>
           </div>
           <div class="rp-row"><div class="rp-label">Area</div><input class="rp-input" id="rp-sqft" disabled/></div>
         </div>
@@ -526,8 +526,8 @@ kbd{background:var(--surface2);border:1px solid var(--border-dark);border-radius
     </div>
     <div class="fg"><label class="flabel">Room Name</label><input class="finput" id="m-rname" placeholder="e.g. Living Room, Crawlspace..."/></div>
     <div class="fg2">
-      <div class="fg" style="margin:0"><label class="flabel">Width (ft)</label><input class="finput" id="m-rw" type="number" value="12" min="1"/></div>
-      <div class="fg" style="margin:0"><label class="flabel">Length (ft)</label><input class="finput" id="m-rl" type="number" value="10" min="1"/></div>
+      <div class="fg" style="margin:0"><label class="flabel">Width (ft)</label><input class="finput" id="m-rw" type="number" value="12" min="0.1" max="1000" step="0.1"/></div>
+      <div class="fg" style="margin:0"><label class="flabel">Length (ft)</label><input class="finput" id="m-rl" type="number" value="10" min="0.1" max="1000" step="0.1"/></div>
     </div>
     <div class="fg"><label class="flabel">Type</label>
       <select class="finput" id="m-rtype">
@@ -602,6 +602,9 @@ const canvas=document.getElementById('fp-canvas');
 const ctx=canvas.getContext('2d');
 const area=document.getElementById('canvasArea');
 const GRID=20;
+function escapeHTML(value){return String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function feet(px){return Math.round(px/GRID*100)/100;}
+function roundArea(value){return Math.round(value*100)/100;}
 
 function getFloor(){return floors[curFloor];}
 function getRooms(){return getFloor().rooms;}
@@ -669,12 +672,12 @@ function drawRoom(r,sel){
     [[r.x,r.y],[r.x+r.w,r.y],[r.x,r.y+r.h],[r.x+r.w,r.y+r.h]].forEach(([hx,hy])=>{ctx.beginPath();ctx.arc(hx,hy,5/view.scale,0,Math.PI*2);ctx.fill();});
   }
   const fs=Math.max(8,Math.min(13,r.w/9));
-  const wft=Math.round(r.w/GRID),hft=Math.round(r.h/GRID);
+  const wft=feet(r.w),hft=feet(r.h);
   if(r.w>50&&r.h>40){
     ctx.fillStyle='#14211B';ctx.font=`700 ${fs}px DM Sans,sans-serif`;ctx.textAlign='center';ctx.textBaseline='middle';
     ctx.fillText(r.name||'Room',r.x+r.w/2,r.y+r.h/2-fs*0.7);
     ctx.font=`500 ${Math.max(7,fs*0.75)}px DM Sans,sans-serif`;ctx.fillStyle='#536158';
-    ctx.fillText(`${wft}x${hft}ft · ${wft*hft}sqft`,r.x+r.w/2,r.y+r.h/2+fs*0.7);
+    ctx.fillText(`${wft}x${hft}ft · ${roundArea(wft*hft)}sqft`,r.x+r.w/2,r.y+r.h/2+fs*0.7);
   }
   ctx.fillStyle='#536158';ctx.font=`500 ${Math.max(6,9/view.scale)}px DM Mono,monospace`;
   ctx.textAlign='center';ctx.textBaseline='bottom';
@@ -899,9 +902,9 @@ function updatePanel(){
     const r=getRooms()[selected.idx];if(!r){selected=null;updatePanel();return;}
     document.getElementById('rp-room').style.display='';
     document.getElementById('rp-name').value=r.name||'';
-    document.getElementById('rp-w').value=Math.round(r.w/GRID);
-    document.getElementById('rp-h').value=Math.round(r.h/GRID);
-    document.getElementById('rp-sqft').value=(Math.round(r.w/GRID)*Math.round(r.h/GRID))+' sq ft';
+    document.getElementById('rp-w').value=feet(r.w);
+    document.getElementById('rp-h').value=feet(r.h);
+    document.getElementById('rp-sqft').value=roundArea(feet(r.w)*feet(r.h))+' sq ft';
     document.getElementById('rp-notes').value=r.notes||'';
     document.getElementById('rp-hvac').value=r.hvac||'';
     document.getElementById('rp-insul').value=r.insul||'';
@@ -944,10 +947,10 @@ function updateCustomTextVal(val){
 }
 function updateDim(dim,val){
   if(!selected||selected.type!=='room')return;
-  const px=parseInt(val)*GRID;if(!px||px<GRID)return;
+  const number=Number(val);if(!Number.isFinite(number)||number<0.1||number>1000)return;const px=number*GRID;
   const r=getRooms()[selected.idx];
   if(dim==='w')r.w=px;else r.h=px;
-  document.getElementById('rp-sqft').value=(Math.round(r.w/GRID)*Math.round(r.h/GRID))+' sq ft';
+  document.getElementById('rp-sqft').value=roundArea(feet(r.w)*feet(r.h))+' sq ft';
   render();updateRoomList();
 }
 
@@ -955,17 +958,17 @@ function updateRoomList(){
   const list=document.getElementById('roomList');
   const rooms=getRooms();list.innerHTML='';let total=0;
   rooms.forEach((r,i)=>{
-    const wft=Math.round(r.w/GRID),hft=Math.round(r.h/GRID),sq=wft*hft;total+=sq;
+    const wft=feet(r.w),hft=feet(r.h),sq=roundArea(wft*hft);total+=sq;
     const el=document.createElement('div');
     el.className='room-item'+(selected&&selected.type==='room'&&selected.idx===i?' sel':'');
     el.innerHTML=`<div class="room-dot" style="background:${r.fill};border:1.5px solid #4B3728"></div>
-      <div class="room-name-txt">${r.name||'Room '+(i+1)}</div>
+      <div class="room-name-txt">${escapeHTML(r.name||'Room '+(i+1))}</div>
       <span class="room-sqft">${sq}sf</span>
       <button class="room-del" onclick="event.stopPropagation();selected={type:'room',idx:${i}};deleteSelected()">×</button>`;
     el.onclick=()=>{selected={type:'room',idx:i};updatePanel();openMobPropsIfSelected();render();};
     list.appendChild(el);
   });
-  document.getElementById('totalArea').textContent=total+' sqft';
+  document.getElementById('totalArea').textContent=roundArea(total)+' sqft';
 }
 
 // ── MOBILE DRAWER ──────────────────────────────────────────────────
@@ -1004,15 +1007,15 @@ function buildMobProps(){
     body.innerHTML=`
       <div class="mob-ps-section">
         <label class="mob-ps-label">Room Name</label>
-        <input class="mob-input" value="${r.name||''}" oninput="updateProp('name',this.value);document.getElementById('mobPsTitle').textContent=this.value||'Room';updateRoomList()" placeholder="Room name"/>
+        <input class="mob-input" value="${escapeHTML(r.name||'')}" oninput="updateProp('name',this.value);document.getElementById('mobPsTitle').textContent=this.value||'Room';updateRoomList()" placeholder="Room name"/>
       </div>
       <div class="mob-ps-section">
         <label class="mob-ps-label">Dimensions</label>
         <div class="mob-input-grid">
-          <div><label class="mob-ps-label" style="font-size:.6rem">Width (ft)</label><input class="mob-input" type="number" value="${Math.round(r.w/GRID)}" min="1" oninput="updateDim('w',this.value)"/></div>
-          <div><label class="mob-ps-label" style="font-size:.6rem">Length (ft)</label><input class="mob-input" type="number" value="${Math.round(r.h/GRID)}" min="1" oninput="updateDim('h',this.value)"/></div>
+          <div><label class="mob-ps-label" style="font-size:.6rem">Width (ft)</label><input class="mob-input" type="number" value="${feet(r.w)}" min="0.1" max="1000" step="0.1" oninput="updateDim('w',this.value)"/></div>
+          <div><label class="mob-ps-label" style="font-size:.6rem">Length (ft)</label><input class="mob-input" type="number" value="${feet(r.h)}" min="0.1" max="1000" step="0.1" oninput="updateDim('h',this.value)"/></div>
         </div>
-        <div style="margin-top:8px;font-size:.8rem;font-weight:700;color:var(--brand)">${Math.round(r.w/GRID)*Math.round(r.h/GRID)} sq ft</div>
+        <div style="margin-top:8px;font-size:.8rem;font-weight:700;color:var(--brand)">${roundArea(feet(r.w)*feet(r.h))} sq ft</div>
       </div>
       <div class="mob-ps-section">
         <label class="mob-ps-label">Color</label>
@@ -1034,7 +1037,7 @@ function buildMobProps(){
       </div>
       <div class="mob-ps-section">
         <label class="mob-ps-label">Field Notes</label>
-        <textarea class="mob-input" rows="4" placeholder="HVAC access, insulation condition, issues found..." style="resize:vertical" oninput="updateProp('notes',this.value)">${r.notes||''}</textarea>
+        <textarea class="mob-input" rows="4" placeholder="HVAC access, insulation condition, issues found..." style="resize:vertical" oninput="updateProp('notes',this.value)">${escapeHTML(r.notes||'')}</textarea>
       </div>`;
   } else {
     const el=getElems()[selected.idx];if(!el)return;
@@ -1043,7 +1046,7 @@ function buildMobProps(){
     body.innerHTML=`
       <div class="mob-ps-section">
         <label class="mob-ps-label">Label</label>
-        <input class="mob-input" value="${el.label||''}" oninput="updateElemLabel(this.value)" placeholder="Label below symbol"/>
+        <input class="mob-input" value="${escapeHTML(el.label||'')}" oninput="updateElemLabel(this.value)" placeholder="Label below symbol"/>
       </div>
       <div class="mob-ps-section">
         <label class="mob-ps-label">Rotate</label>
@@ -1053,7 +1056,7 @@ function buildMobProps(){
       </div>
       ${isText?`<div class="mob-ps-section">
         <label class="mob-ps-label">Text Content</label>
-        <input class="mob-input" value="${el.customText||''}" oninput="updateCustomTextVal(this.value)" placeholder="Your text..."/>
+        <input class="mob-input" value="${escapeHTML(el.customText||'')}" oninput="updateCustomTextVal(this.value)" placeholder="Your text..."/>
         <div style="display:flex;gap:10px;margin-top:8px;align-items:center">
           <label class="mob-ps-label">Size</label>
           <input type="number" class="mob-input" value="${el.fontSize||13}" min="8" max="36" style="width:70px" oninput="updateProp('fontSize',parseInt(this.value));render()"/>
@@ -1063,11 +1066,11 @@ function buildMobProps(){
       </div>`:''}
       ${isArrow?`<div class="mob-ps-section">
         <label class="mob-ps-label">Arrow Label</label>
-        <input class="mob-input" value="${el.arrowLabel||''}" oninput="updateProp('arrowLabel',this.value);render()" placeholder="Label..."/>
+        <input class="mob-input" value="${escapeHTML(el.arrowLabel||'')}" oninput="updateProp('arrowLabel',this.value);render()" placeholder="Label..."/>
       </div>`:''}
       <div class="mob-ps-section">
         <label class="mob-ps-label">Field Notes</label>
-        <textarea class="mob-input" rows="3" placeholder="Notes about this element..." style="resize:vertical" oninput="updateProp('notes',this.value)">${el.notes||''}</textarea>
+        <textarea class="mob-input" rows="3" placeholder="Notes about this element..." style="resize:vertical" oninput="updateProp('notes',this.value)">${escapeHTML(el.notes||'')}</textarea>
       </div>`;
   }
 }
@@ -1078,8 +1081,9 @@ function closeAddRoom(){document.getElementById('addRoomOverlay').classList.remo
 document.getElementById('addRoomOverlay').addEventListener('click',e=>{if(e.target===document.getElementById('addRoomOverlay'))closeAddRoom();});
 function confirmAddRoom(){
   const name=document.getElementById('m-rname').value||'New Room';
-  const w=parseInt(document.getElementById('m-rw').value)||12;
-  const h=parseInt(document.getElementById('m-rl').value)||10;
+  const w=Number(document.getElementById('m-rw').value);
+  const h=Number(document.getElementById('m-rl').value);
+  if(!Number.isFinite(w)||!Number.isFinite(h)||w<0.1||h<0.1||w>1000||h>1000){toast('Enter room dimensions between 0.1 and 1,000 feet');return;}
   const type=document.getElementById('m-rtype').value;
   const fill=FILLS[type]||SWATCH_FILLS[0];
   pushHistory();
@@ -1097,8 +1101,9 @@ function doExport(){
   const pad=60,minX=Math.min(...all.map(r=>r.x))-pad,minY=Math.min(...all.map(r=>r.y))-pad;
   const maxX=Math.max(...all.map(r=>r.x+r.w))+pad,maxY=Math.max(...all.map(r=>r.y+r.h))+pad;
   const tw=Math.max(800,maxX-minX),th=Math.max(600,maxY-minY)+80;
-  const tc=document.createElement('canvas');tc.width=tw;tc.height=th;
-  const tx=tc.getContext('2d');
+  const scale=Math.min(1,4096/tw,4096/th);
+  const tc=document.createElement('canvas');tc.width=Math.ceil(tw*scale);tc.height=Math.ceil(th*scale);
+  const tx=tc.getContext('2d');tx.scale(scale,scale);
   tx.fillStyle='#fff';tx.fillRect(0,0,tw,th);
   tx.fillStyle='#12211B';tx.font='bold 16px DM Sans,sans-serif';tx.textAlign='left';tx.fillText(proj+' - Floor Plan',14,26);
   tx.fillStyle='#849087';tx.font='500 11px DM Sans,sans-serif';tx.fillText('Home Energy Assessment · '+new Date().toLocaleDateString(),14,44);
@@ -1107,11 +1112,11 @@ function doExport(){
   getRooms().forEach(r=>{
     tx.fillStyle=r.fill||'#FFFBEB';tx.fillRect(r.x+ox,r.y+oy,r.w,r.h);
     tx.strokeStyle='#3D2510';tx.lineWidth=4;tx.strokeRect(r.x+ox+2,r.y+oy+2,r.w-4,r.h-4);
-    const wft=Math.round(r.w/GRID),hft=Math.round(r.h/GRID);
+    const wft=feet(r.w),hft=feet(r.h);
     tx.fillStyle='#14211B';tx.font='bold 12px DM Sans,sans-serif';tx.textAlign='center';tx.textBaseline='middle';
     tx.fillText(r.name||'Room',r.x+ox+r.w/2,r.y+oy+r.h/2-8);
     tx.font='500 10px DM Sans,sans-serif';tx.fillStyle='#536158';
-    tx.fillText(`${wft}x${hft}ft · ${wft*hft}sqft`,r.x+ox+r.w/2,r.y+oy+r.h/2+8);
+    tx.fillText(`${wft}x${hft}ft · ${roundArea(wft*hft)}sqft`,r.x+ox+r.w/2,r.y+oy+r.h/2+8);
     if(r.notes){tx.font='italic 9px DM Sans,sans-serif';tx.fillStyle='#849087';tx.fillText(r.notes.substring(0,40),r.x+ox+r.w/2,r.y+oy+r.h/2+22);}
   });
   getElems().forEach(e=>{
@@ -1163,7 +1168,11 @@ function doExport(){
   });
   const link=document.createElement('a');
   link.download=proj.replace(/\s+/g,'_')+'_floor_plan.png';
-  link.href=tc.toDataURL('image/png');link.click();toast('Exported!');
+  tc.toBlob(blob=>{
+    if(!blob){toast('Unable to export. Please try again.');return;}
+    const url=URL.createObjectURL(blob);link.href=url;document.body.appendChild(link);link.click();link.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),60000);toast('Exported!');
+  },'image/png');
 }
 
 function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
@@ -1190,3 +1199,4 @@ resize();resetView();updateRoomList();
 </script>
 </body>
 </html>
+
