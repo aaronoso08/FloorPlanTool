@@ -40,3 +40,6 @@ body{background:radial-gradient(circle at 90% -10%,rgba(255,122,26,.10),transpar
 .mob-tab svg{width:22px;height:22px;flex-shrink:0}.mob-tab{gap:7px}.feature-buttons .lb-btn svg{flex-shrink:0}
 
 .feature-buttons .lb-btn[id]{min-height:62px;background:var(--surface2);color:var(--text2)}.feature-buttons .lb-btn.active{background:var(--brand);border-color:var(--brand);color:white}
+
+/* Neutral identity for independent review. */
+.topbar-icon,.mark{display:none!important}
