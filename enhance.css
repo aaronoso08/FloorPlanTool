@@ -1,0 +1,19 @@
+:root{--brand:#6B2D0F;--brand-mid:#8B3A12;--brand-light:#A0522D;--accent:#E87A2A;--bg:#F7F3EF;--surface:#FFF;--surface2:#FDF8F4;--border:#E8DDD4;--border-dark:#D4C4B0;--text:#1C1209;--text2:#5C4033;--text3:#9C7B6B}
+.topbar{height:56px;padding:0 14px;box-shadow:0 2px 12px rgba(0,0,0,.25)}
+.topbar-icon{display:flex;align-items:center;justify-content:center;color:#fff;font-family:'DM Mono',monospace;font-size:.72rem;font-weight:700;border:1px solid rgba(255,255,255,.2)}
+.topbar-title{font-size:.95rem;font-weight:800}.topbar-sub{font-size:.62rem;opacity:.68}
+.app-body{height:calc(100vh - 56px);height:calc(100dvh - 56px)}
+.left-bar{width:82px;padding:8px 6px;gap:4px}.lb-btn{width:68px;padding:7px 4px;font-size:.62rem}.lb-icon{font-size:17px}
+.right-panel{width:236px}.rp-body{padding:12px}.rp-input{min-height:40px;background:#fff}
+.lb-start-tip{position:absolute;left:14px;top:14px;z-index:20;max-width:340px;background:rgba(255,255,255,.96);border:1.5px solid var(--border);border-left:4px solid var(--accent);border-radius:12px;padding:10px 38px 10px 12px;box-shadow:0 4px 14px rgba(107,45,15,.12);color:var(--text2);font-size:.74rem;line-height:1.45}
+.lb-start-tip strong{display:block;color:var(--text);font-size:.8rem;margin-bottom:2px}.lb-start-tip button{position:absolute;right:8px;top:7px;border:0;background:transparent;color:var(--text3);font-size:1rem;cursor:pointer}
+.lb-save-state{font-family:'DM Mono',monospace;font-size:.6rem;color:rgba(255,255,255,.78);white-space:nowrap}
+.mob-tabs{overflow-x:auto;justify-content:flex-start;scrollbar-width:none;padding-bottom:1px}.mob-tabs::-webkit-scrollbar{display:none}.mob-tab{min-width:78px;flex:0 0 78px;padding:7px 4px}
+.zoom-btn{width:40px;height:40px}
+@media(max-width:700px){
+ .topbar{height:56px;padding:0 8px}.app-body{height:calc(100dvh - 56px)}.proj-input{width:110px;min-height:34px}.topbar-right{gap:4px}.lb-save-state{display:none}
+ .btn{min-height:36px}.btn-sm{padding:6px 9px}.lb-start-tip{left:8px;right:8px;top:58px;max-width:none;font-size:.7rem}
+ .mob-tool-row{gap:5px;padding:7px 8px}.mob-tool-btn{min-height:44px;font-size:.66rem}.mob-elem-btn{min-height:70px;font-size:.66rem}.mob-input{font-size:16px!important;min-height:46px}
+ .watermark{display:none}
+}
+@media(max-width:430px){.topbar-sub{display:none}.proj-input{width:92px}.btn-ghost{padding-left:8px;padding-right:8px}.btn-primary{padding-left:9px;padding-right:9px}}
