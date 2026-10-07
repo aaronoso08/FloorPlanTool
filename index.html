@@ -241,7 +241,7 @@ kbd{background:var(--surface2);border:1px solid var(--border-dark);border-radius
 @keyframes nudgePop{from{opacity:0;transform:translateX(-50%) translateY(12px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
 @media(orientation:landscape){#rotate-nudge{display:none !important}}
 </style>
-<link rel="stylesheet" href="enhance.css?v=6"></head>
+<link rel="stylesheet" href="enhance.css?v=7"></head>
 <body>
 
 <!-- TOPBAR -->
@@ -267,9 +267,8 @@ kbd{background:var(--surface2);border:1px solid var(--border-dark);border-radius
 <div class="app-body">
 
   <!-- LEFT SIDEBAR (desktop) -->
-  <div class="left-bar" id="leftBar">
-    <div class="lb-group">
-      <div class="lb-label">Tools</div>
+  <aside class="left-bar" id="leftBar" aria-label="Plan tools"><div class="tool-heading">Build your plan</div><p class="tool-help">Add a room, set its size, then place features.</p><button class="btn btn-primary" onclick="openAddRoom()">+ Add room</button><label class="feature-label" for="feature-search">Find a feature</label><input id="feature-search" type="search" placeholder="Door, furnace, panel…"><div id="feature-empty" role="status" hidden>No matching features</div>
+    <details class="lb-group" open><summary>Tools</summary><div class="feature-buttons">
       <button class="lb-btn active" id="tb-select" onclick="setTool('select')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 3l14 9-7 1-4 7z"/></svg>Select
       </button>
@@ -278,23 +277,17 @@ kbd{background:var(--surface2);border:1px solid var(--border-dark);border-radius
       </button>
       <button class="lb-btn" id="tb-pan" onclick="setTool('pan')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 9l-3 3 3 3M9 5l3-3 3 3M15 19l-3 3-3-3M19 9l3 3-3 3M12 12v.01"/></svg>Pan
-      </button>
-    </div>
-    <div class="lb-group">
-      <div class="lb-label">Structure</div>
+      </button></div></details>
+    <details class="lb-group" open><summary>Structure</summary><div class="feature-buttons">
       <button class="lb-btn" onclick="addElement('door')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="2" width="14" height="20" rx="1"/><path d="M17 12h4"/></svg>Door</button>
       <button class="lb-btn" onclick="addElement('window')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="6" width="18" height="12" rx="1"/><line x1="12" y1="6" x2="12" y2="18"/><line x1="3" y1="12" x2="21" y2="12"/></svg>Window</button>
-      <button class="lb-btn" onclick="addElement('stairs')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h4v-4h4v-4h4v-4h4V3"/></svg>Stairs</button>
-    </div>
-    <div class="lb-group">
-      <div class="lb-label">Safety</div>
+      <button class="lb-btn" onclick="addElement('stairs')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h4v-4h4v-4h4v-4h4V3"/></svg>Stairs</button></div></details>
+    <details class="lb-group"><summary>Safety</summary><div class="feature-buttons">
       <button class="lb-btn" onclick="addElement('smoke')"><div class="lb-icon">🔴</div>Smoke</button>
       <button class="lb-btn" onclick="addElement('co')"><div class="lb-icon">🟠</div>CO Det.</button>
       <button class="lb-btn" onclick="addElement('cosmoke')"><div class="lb-icon">🟡</div>CO+Smoke</button>
-      <button class="lb-btn" onclick="addElement('fireext')"><div class="lb-icon">🧯</div>Fire Ext</button>
-    </div>
-    <div class="lb-group">
-      <div class="lb-label">Mechanical</div>
+      <button class="lb-btn" onclick="addElement('fireext')"><div class="lb-icon">🧯</div>Fire Ext</button></div></details>
+    <details class="lb-group"><summary>Mechanical</summary><div class="feature-buttons">
       <button class="lb-btn" onclick="addElement('furnace')"><div class="lb-icon">🔆</div>Furnace</button>
       <button class="lb-btn" onclick="addElement('water')"><div class="lb-icon">🔥</div>Water Htr</button>
       <button class="lb-btn" onclick="addElement('hvac')"><div class="lb-icon">❄️</div>HVAC</button>
@@ -303,43 +296,32 @@ kbd{background:var(--surface2);border:1px solid var(--border-dark);border-radius
       <button class="lb-btn" onclick="addElement('outfan')"><div class="lb-icon">🔄</div>Ext Fan</button>
       <button class="lb-btn" onclick="addElement('exhaust')"><div class="lb-icon">⬆️</div>Exhaust</button>
       <button class="lb-btn" onclick="addElement('vent')"><div class="lb-icon">▦</div>Vent/Reg</button>
-      <button class="lb-btn" onclick="addElement('ductwork')"><div class="lb-icon">━</div>Ductwork</button>
-    </div>
-    <div class="lb-group">
-      <div class="lb-label">Access</div>
+      <button class="lb-btn" onclick="addElement('ductwork')"><div class="lb-icon">━</div>Ductwork</button></div></details>
+    <details class="lb-group"><summary>Access</summary><div class="feature-buttons">
       <button class="lb-btn" onclick="addElement('crawlentry')"><div class="lb-icon">🔲</div>Crawl Entry</button>
       <button class="lb-btn" onclick="addElement('atticentry')"><div class="lb-icon">🔳</div>Attic Entry</button>
       <button class="lb-btn" onclick="addElement('electrical')"><div class="lb-icon">⚡</div>Elec Panel</button>
-      <button class="lb-btn" onclick="addElement('gasmeter')"><div class="lb-icon">🟦</div>Gas Meter</button>
-    </div>
-    <div class="lb-group">
-      <div class="lb-label">Insulation</div>
+      <button class="lb-btn" onclick="addElement('gasmeter')"><div class="lb-icon">🟦</div>Gas Meter</button></div></details>
+    <details class="lb-group"><summary>Insulation</summary><div class="feature-buttons">
       <button class="lb-btn" onclick="addElement('insul_wall')"><div class="lb-icon">🧱</div>Wall</button>
       <button class="lb-btn" onclick="addElement('insul_ceil')"><div class="lb-icon">⬜</div>Ceiling</button>
       <button class="lb-btn" onclick="addElement('insul_floor')"><div class="lb-icon">▬</div>Floor</button>
-      <button class="lb-btn" onclick="addElement('vapor')"><div class="lb-icon">💧</div>Vapor Barr</button>
-    </div>
-    <div class="lb-group">
-      <div class="lb-label">Furnish</div>
+      <button class="lb-btn" onclick="addElement('vapor')"><div class="lb-icon">💧</div>Vapor Barr</button></div></details>
+    <details class="lb-group"><summary>Furnish</summary><div class="feature-buttons">
       <button class="lb-btn" onclick="addElement('sofa')"><div class="lb-icon">🛋️</div>Sofa</button>
       <button class="lb-btn" onclick="addElement('bed')"><div class="lb-icon">🛏️</div>Bed</button>
       <button class="lb-btn" onclick="addElement('toilet')"><div class="lb-icon">🚽</div>Toilet</button>
       <button class="lb-btn" onclick="addElement('sink')"><div class="lb-icon">🚿</div>Sink</button>
       <button class="lb-btn" onclick="addElement('stove')"><div class="lb-icon">🍳</div>Stove</button>
       <button class="lb-btn" onclick="addElement('table')"><div class="lb-icon">🪑</div>Table</button>
-      <button class="lb-btn" onclick="addElement('washer')"><div class="lb-icon">🧺</div>W/D</button>
-    </div>
-    <div class="lb-group">
-      <div class="lb-label">Text</div>
+      <button class="lb-btn" onclick="addElement('washer')"><div class="lb-icon">🧺</div>W/D</button></div></details>
+    <details class="lb-group"><summary>Text</summary><div class="feature-buttons">
       <button class="lb-btn" onclick="addCustomText()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7V4h16v3M9 20h6M12 4v16"/></svg>Add Text</button>
-      <button class="lb-btn" onclick="addElement('arrow')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>Arrow</button>
-    </div>
-    <div class="lb-group">
-      <div class="lb-label">Edit</div>
+      <button class="lb-btn" onclick="addElement('arrow')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>Arrow</button></div></details>
+    <details class="lb-group" open><summary>Edit</summary><div class="feature-buttons">
       <button class="lb-btn" onclick="undo()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 10h10a5 5 0 010 10H9M3 10l4-4M3 10l4 4"/></svg>Undo</button>
-      <button class="lb-btn" onclick="deleteSelected()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>Delete</button>
-    </div>
-  </div>
+      <button class="lb-btn" onclick="deleteSelected()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>Delete</button></div></details>
+  </aside>
 
   <!-- CANVAS AREA -->
   <div class="canvas-area" id="canvasArea">
@@ -368,20 +350,20 @@ kbd{background:var(--surface2);border:1px solid var(--border-dark);border-radius
 
   <!-- RIGHT PANEL (desktop) -->
   <div class="right-panel">
-    <div class="rp-hdr">Properties</div>
+    <div class="rp-hdr">Room & feature details</div>
     <div class="rp-body">
       <div id="rp-empty" style="text-align:center;padding:20px 5px;color:var(--text3)">
         <div style="font-size:2rem;margin-bottom:8px">🖱️</div>
-        <div style="font-size:.76rem;font-weight:600;margin-bottom:4px">Click to select</div>
-        <div style="font-size:.68rem">Draw a room or add elements from the left panel</div>
+        <div style="font-size:.76rem;font-weight:600;margin-bottom:4px">Select a room or feature</div>
+        <div style="font-size:.68rem">Add a room to start. Select it on the plan or in the room list to edit its size and notes.</div>
       </div>
       <div id="rp-room" style="display:none">
         <div class="rp-section">
           <div class="rp-title">Room</div>
           <div class="rp-row"><div class="rp-label">Name</div><input class="rp-input" id="rp-name" oninput="updateProp('name',this.value)" placeholder="Room name"/></div>
           <div class="rp-grid2">
-            <div class="rp-row"><div class="rp-label">W (ft)</div><input class="rp-input" id="rp-w" type="number" min="0.1" max="1000" step="0.1" oninput="updateDim('w',this.value)"/></div>
-            <div class="rp-row"><div class="rp-label">L (ft)</div><input class="rp-input" id="rp-h" type="number" min="0.1" max="1000" step="0.1" oninput="updateDim('h',this.value)"/></div>
+            <div class="rp-row"><div class="rp-label">Width (ft)</div><input class="rp-input" id="rp-w" type="number" min="0.1" max="1000" step="0.1" oninput="updateDim('w',this.value)"/></div>
+            <div class="rp-row"><div class="rp-label">Length (ft)</div><input class="rp-input" id="rp-h" type="number" min="0.1" max="1000" step="0.1" oninput="updateDim('h',this.value)"/></div>
           </div>
           <div class="rp-row"><div class="rp-label">Area</div><input class="rp-input" id="rp-sqft" disabled/></div>
         </div>
@@ -493,7 +475,7 @@ kbd{background:var(--surface2);border:1px solid var(--border-dark);border-radius
 <div class="mob-props-sheet" id="mobPropsSheet">
   <div class="mob-ps-handle"></div>
   <div class="mob-ps-hdr">
-    <div class="mob-ps-title" id="mobPsTitle">Properties</div>
+    <div class="mob-ps-title" id="mobPsTitle">Room & feature details</div>
     <div style="display:flex;gap:8px">
       <button class="btn btn-danger btn-sm" onclick="deleteSelected();closeMobProps()">Delete</button>
       <button class="mob-drawer-close" onclick="closeMobProps()">✕</button>
@@ -663,7 +645,7 @@ function drawRoom(r,sel){
   ctx.shadowColor=sel?'rgba(255,122,26,0.4)':'rgba(0,0,0,0.12)';ctx.shadowBlur=sel?14:5;
   ctx.fillStyle=r.fill||'#FFFBEB';ctx.fillRect(r.x,r.y,r.w,r.h);
   ctx.shadowColor='transparent';ctx.shadowBlur=0;
-  ctx.strokeStyle='#3D2510';ctx.lineWidth=ww;
+  ctx.strokeStyle='#193B2D';ctx.lineWidth=ww;
   ctx.strokeRect(r.x+ww/2,r.y+ww/2,r.w-ww,r.h-ww);
   if(sel){
     ctx.strokeStyle='#FF7A1A';ctx.lineWidth=1.5;ctx.setLineDash([5,3]);
@@ -798,7 +780,7 @@ function pointerUp(){
     pushHistory();
     const idx=getRooms().length%SWATCH_FILLS.length;
     getRooms().push({x:drawRect.x,y:drawRect.y,w:drawRect.w,h:drawRect.h,
-      name:'Room '+(getRooms().length+1),fill:SWATCH_FILLS[idx],stroke:'#4B3728',notes:'',hvac:'',insul:'',type:'other'});
+      name:'Room '+(getRooms().length+1),fill:SWATCH_FILLS[idx],stroke:'#24513E',notes:'',hvac:'',insul:'',type:'other'});
     selected={type:'room',idx:getRooms().length-1};
     updatePanel();updateRoomList();openMobPropsIfSelected();
   }
@@ -961,7 +943,7 @@ function updateRoomList(){
     const wft=feet(r.w),hft=feet(r.h),sq=roundArea(wft*hft);total+=sq;
     const el=document.createElement('div');
     el.className='room-item'+(selected&&selected.type==='room'&&selected.idx===i?' sel':'');
-    el.innerHTML=`<div class="room-dot" style="background:${r.fill};border:1.5px solid #4B3728"></div>
+    el.innerHTML=`<div class="room-dot" style="background:${r.fill};border:1.5px solid #24513E"></div>
       <div class="room-name-txt">${escapeHTML(r.name||'Room '+(i+1))}</div>
       <span class="room-sqft">${sq}sf</span>
       <button class="room-del" onclick="event.stopPropagation();selected={type:'room',idx:${i}};deleteSelected()">×</button>`;
@@ -1087,10 +1069,11 @@ function confirmAddRoom(){
   const type=document.getElementById('m-rtype').value;
   const fill=FILLS[type]||SWATCH_FILLS[0];
   pushHistory();
-  const rooms=getRooms(),off=rooms.length*GRID;
-  rooms.push({x:2*GRID+off%120,y:2*GRID+Math.floor(off/120)*GRID,w:w*GRID,h:h*GRID,name,fill,stroke:'#4B3728',type,notes:'',hvac:'',insul:''});
+  const rooms=getRooms();
+  const nextX=rooms.length?Math.max(...rooms.map(r=>r.x+r.w))+GRID:2*GRID;
+  rooms.push({x:nextX,y:2*GRID,w:w*GRID,h:h*GRID,name,fill,stroke:'#24513E',type,notes:'',hvac:'',insul:''});
   selected={type:'room',idx:rooms.length-1};
-  closeAddRoom();updatePanel();updateRoomList();openMobPropsIfSelected();render();toast(name+' added');
+  closeAddRoom();updatePanel();updateRoomList();openMobPropsIfSelected();resetView();render();toast(name+' added');
 }
 
 // ── EXPORT ─────────────────────────────────────────────────────────
@@ -1111,7 +1094,7 @@ function doExport(){
   const ox=-minX,oy=-minY+64;
   getRooms().forEach(r=>{
     tx.fillStyle=r.fill||'#FFFBEB';tx.fillRect(r.x+ox,r.y+oy,r.w,r.h);
-    tx.strokeStyle='#3D2510';tx.lineWidth=4;tx.strokeRect(r.x+ox+2,r.y+oy+2,r.w-4,r.h-4);
+    tx.strokeStyle='#193B2D';tx.lineWidth=4;tx.strokeRect(r.x+ox+2,r.y+oy+2,r.w-4,r.h-4);
     const wft=feet(r.w),hft=feet(r.h);
     tx.fillStyle='#14211B';tx.font='bold 12px DM Sans,sans-serif';tx.textAlign='center';tx.textBaseline='middle';
     tx.fillText(r.name||'Room',r.x+ox+r.w/2,r.y+oy+r.h/2-8);
@@ -1197,6 +1180,6 @@ function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t
 // ── INIT ───────────────────────────────────────────────────────────
 resize();resetView();updateRoomList();
 </script>
-<script src="enhance.js?v=6"></script></body>
+<script src="enhance.js?v=7"></script></body>
 </html>
 
