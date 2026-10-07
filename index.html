@@ -241,7 +241,7 @@ kbd{background:var(--surface2);border:1px solid var(--border-dark);border-radius
 @keyframes nudgePop{from{opacity:0;transform:translateX(-50%) translateY(12px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
 @media(orientation:landscape){#rotate-nudge{display:none !important}}
 </style>
-<link rel="stylesheet" href="enhance.css?v=10"></head>
+<link rel="stylesheet" href="enhance.css?v=11"></head>
 <body>
 
 <!-- TOPBAR -->
@@ -792,7 +792,9 @@ function setTool(t){
 function addElement(type,closeDrawer=true){
   const def=ELEM_DEFS[type];if(!def)return;
   pushHistory();
-  const cx=toWorld(canvas.width/2,canvas.height/2);
+  const room=selected?.type==='room'?getRooms()[selected.idx]:getRooms()[0];
+  const count=getElems().length%9;
+  const cx=room?{x:room.x+room.w*(1+count%3)/4,y:room.y+room.h*(1+Math.floor(count/3))/4}:toWorld(canvas.width/2,canvas.height/2);
   getElems().push({type,x:snapW(cx.x-def.w/2),y:snapW(cx.y-def.h/2),w:def.w,h:def.h,label:def.label,rot:0,notes:''});
   selected={type:'elem',idx:getElems().length-1};
   if(closeDrawer)closeMobDrawer();
